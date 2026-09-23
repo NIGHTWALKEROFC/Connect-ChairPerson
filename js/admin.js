@@ -37,10 +37,32 @@ loginForm.addEventListener("submit", async (e) => {
   try {
     await auth.signInWithEmailAndPassword(email, password);
   } catch (err) {
-    loginError.textContent = "Sign in failed. Check your email and password.";
+    console.error(err);
+    loginError.textContent = describeAuthError(err);
     loginError.hidden = false;
   }
 });
+
+function describeAuthError(err) {
+  const code = err && err.code;
+  if (code === "auth/unauthorized-domain") {
+    return "This website's address isn't in Firebase's Authorized domains list yet. Add it in Firebase Console → Authentication → Settings → Authorized domains.";
+  }
+  if (code === "auth/user-not-found" || code === "auth/invalid-credential" || code === "auth/wrong-password") {
+    return "Incorrect email or password.";
+  }
+  if (code === "auth/invalid-email") {
+    return "That doesn't look like a valid email address.";
+  }
+  if (code === "auth/too-many-requests") {
+    return "Too many attempts. Please wait a moment and try again.";
+  }
+  if (code === "auth/network-request-failed") {
+    return "Network error — check your internet connection.";
+  }
+  // Fallback: show Firebase's own message so the exact cause is visible.
+  return (err && err.message) ? err.message : "Sign in failed. Please try again.";
+}
 
 logoutBtn.addEventListener("click", () => auth.signOut());
 
@@ -87,7 +109,7 @@ function buildCard(c) {
   card.innerHTML = `
     <div class="admin-card-head">
       <div>
-        <h3>${escapeHtml(c.name)} — Class ${escapeHtml(c.studentClass)} ${escapeHtml(c.division)}</h3>
+        <h3>${escapeHtml(c.name)} — Class ${escapeHtml(c.studentClass)}</h3>
         <p class="student-meta">${date}</p>
       </div>
     </div>
