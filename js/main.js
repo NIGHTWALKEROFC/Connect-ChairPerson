@@ -202,11 +202,10 @@ complaintForm.addEventListener("submit", async (e) => {
 
   const name = document.getElementById("fName").value.trim();
   const studentClass = document.getElementById("fClass").value.trim();
-  const division = document.getElementById("fDivision").value.trim();
   const complaintText = document.getElementById("fComplaint").value.trim();
   const file = fileInput.files[0];
 
-  if (!name || !studentClass || !division || !complaintText) {
+  if (!name || !studentClass || !complaintText) {
     formGenericError.textContent = TRANSLATIONS[currentLang].formErrorRequired;
     formGenericError.hidden = false;
     return;
@@ -235,7 +234,6 @@ complaintForm.addEventListener("submit", async (e) => {
       trackingId,
       name,
       studentClass,
-      division,
       complaintText,
       fileBase64,
       fileName,
