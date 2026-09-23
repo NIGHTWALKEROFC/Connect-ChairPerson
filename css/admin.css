@@ -1,0 +1,102 @@
+/* Admin page extras — reuses tokens and .btn/.field/.card styles from style.css */
+
+.admin-body { background: var(--ivory); }
+
+.admin-login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.admin-login-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 36px 32px;
+  width: min(380px, 92vw);
+}
+.admin-login-card h1 { font-size: 1.5rem; }
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 18px;
+  color: var(--grey);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.back-link:hover { color: var(--indigo); }
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+.admin-email { color: var(--grey); font-size: 0.85rem; margin-right: 14px; }
+
+.admin-main { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+.admin-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.filter-chip {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--grey);
+}
+.filter-chip.active { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+
+.admin-list { display: flex; flex-direction: column; gap: 14px; }
+
+.admin-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.admin-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.admin-card h3 { margin: 0; font-size: 1.05rem; }
+.admin-card .student-meta { color: var(--grey); font-size: 0.85rem; margin: 4px 0 12px; }
+.admin-card .complaint-text { color: var(--charcoal); font-size: 0.95rem; line-height: 1.55; margin: 0 0 12px; white-space: pre-wrap; }
+.admin-card .attachment-link { font-size: 0.85rem; color: var(--teal); font-weight: 600; text-decoration: none; }
+.admin-card .attachment-link:hover { text-decoration: underline; }
+.admin-card .tracking { font-size: 0.78rem; color: var(--grey); margin-top: 4px; }
+
+.status-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+.status-controls select {
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  background: var(--ivory);
+}
+.status-controls input[type="text"] {
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  flex: 1;
+  min-width: 140px;
+}
+.status-controls .btn { padding: 8px 16px; font-size: 0.85rem; }
+.save-note { font-size: 0.78rem; color: var(--approved); margin-left: 6px; opacity: 0; transition: opacity 0.2s ease; }
+.save-note.show { opacity: 1; }
