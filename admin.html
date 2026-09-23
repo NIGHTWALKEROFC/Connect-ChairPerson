@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Voice to the Chair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+<!-- ============ LOGIN ============ -->
+<div class="admin-login-wrap" id="loginWrap">
+  <form class="admin-login-card" id="loginForm">
+    <h1>Chairperson's Office</h1>
+    <p class="modal-sub">Admin sign in</p>
+    <div class="field">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" required autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" required autocomplete="current-password">
+    </div>
+    <p class="form-error" id="loginError" hidden></p>
+    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Sign in</button>
+    <a href="index.html" class="back-link">&larr; Back to site</a>
+  </form>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div class="admin-dashboard" id="dashboard" hidden>
+  <header class="admin-topbar">
+    <span class="brand">Chairperson's Office — Admin</span>
+    <div>
+      <span class="admin-email" id="adminEmail"></span>
+      <button class="btn btn-outline" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-filters">
+      <button class="filter-chip active" data-filter="all">All</button>
+      <button class="filter-chip" data-filter="pending">Pending</button>
+      <button class="filter-chip" data-filter="approved">Approved</button>
+      <button class="filter-chip" data-filter="rejected">Rejected</button>
+      <button class="filter-chip" data-filter="custom">Custom</button>
+    </div>
+
+    <p class="empty-note" id="dashEmpty" hidden>No complaints yet.</p>
+    <div class="admin-list" id="adminList"></div>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
