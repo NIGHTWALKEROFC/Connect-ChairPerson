@@ -7,20 +7,76 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(201,151,61,0.14), transparent 42%),
+    radial-gradient(circle at 82% 78%, rgba(47,111,111,0.14), transparent 42%),
+    var(--indigo-dark);
 }
 .admin-login-card {
   background: #fff;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 36px 32px;
-  width: min(380px, 92vw);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(9, 14, 28, 0.35);
+  padding: 40px 36px 32px;
+  width: min(400px, 100%);
+  text-align: center;
 }
-.admin-login-card h1 { font-size: 1.5rem; }
+.admin-login-badge {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 18px;
+  border-radius: 999px;
+  background: linear-gradient(155deg, var(--indigo), var(--indigo-dark));
+  color: var(--gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(27,42,74,0.35);
+}
+.admin-login-card h1 {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+.admin-login-card .modal-sub {
+  margin-bottom: 26px;
+  font-size: 0.9rem;
+}
+.admin-login-card .field { text-align: left; margin-bottom: 18px; }
+.admin-login-card label { display: block; margin-bottom: 6px; }
+.admin-login-card input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 9px;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  background: var(--ivory);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.admin-login-card input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,151,61,0.15);
+}
+.admin-login-card .form-error {
+  text-align: left;
+  background: rgba(179,69,44,0.08);
+  border: 1px solid rgba(179,69,44,0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: -4px 0 16px;
+  font-size: 0.85rem;
+}
+.admin-login-card button[type="submit"] {
+  padding: 13px 26px;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
 .back-link {
   display: block;
   text-align: center;
-  margin-top: 18px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
   color: var(--grey);
   font-size: 0.85rem;
   text-decoration: none;
