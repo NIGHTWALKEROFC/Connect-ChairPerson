@@ -12,45 +12,6 @@
 </head>
 <body class="admin-body">
 
-<!-- ============ DEBUG / DIAGNOSTICS ============
-     This panel and the vtcLog() function exist purely to help you see
-     exactly what's happening when something goes wrong (e.g. login not
-     working). It logs every step to both this on-page panel and the
-     browser console. Safe to leave in permanently — it's invisible unless
-     you open it, and it's not visible to students since it's only on
-     admin.html, not index.html. -->
-<script>
-  function vtcLog(msg) {
-    var line = "[" + new Date().toLocaleTimeString() + "] " + msg;
-    console.log(line);
-    var el = document.getElementById("debugLog");
-    if (el) { el.textContent += line + "\n"; el.scrollTop = el.scrollHeight; }
-  }
-  window.addEventListener("error", function (e) {
-    vtcLog("PAGE ERROR: " + e.message + " (" + (e.filename || "") + ":" + (e.lineno || "") + ")");
-  }, true);
-  window.addEventListener("unhandledrejection", function (e) {
-    var reason = e.reason && e.reason.message ? e.reason.message : e.reason;
-    vtcLog("UNHANDLED PROMISE REJECTION: " + reason);
-  });
-</script>
-
-<div class="debug-panel" id="debugPanel">
-  <div class="debug-panel-head">
-    <span>Diagnostics</span>
-    <button type="button" id="debugToggle">hide</button>
-  </div>
-  <pre id="debugLog">[start] Page loading...\n</pre>
-</div>
-<script>
-  document.getElementById("debugToggle").addEventListener("click", function () {
-    var log = document.getElementById("debugLog");
-    var hidden = log.style.display === "none";
-    log.style.display = hidden ? "block" : "none";
-    this.textContent = hidden ? "hide" : "show";
-  });
-</script>
-
 <!-- ============ LOGIN ============ -->
 <div class="admin-login-wrap" id="loginWrap">
   <form class="admin-login-card" id="loginForm" novalidate>
@@ -114,10 +75,10 @@
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" onload="vtcLog('Loaded firebase-app-compat.js')" onerror="vtcLog('FAILED to load firebase-app-compat.js — check internet connection or ad-blocker')"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js" onload="vtcLog('Loaded firebase-firestore-compat.js')" onerror="vtcLog('FAILED to load firebase-firestore-compat.js')"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js" onload="vtcLog('Loaded firebase-auth-compat.js')" onerror="vtcLog('FAILED to load firebase-auth-compat.js')"></script>
-<script src="js/firebase-config.js" onload="vtcLog('Loaded js/firebase-config.js')" onerror="vtcLog('FAILED to load js/firebase-config.js — check the file path')"></script>
-<script src="js/admin.js" onload="vtcLog('Loaded js/admin.js')" onerror="vtcLog('FAILED to load js/admin.js — check the file path')"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/admin.js"></script>
 </body>
 </html>
