@@ -133,40 +133,96 @@ function escapeHtml(str) {
 }
 
 function buildCard(c) {
-  const card = document.createElement("div");
+  const card = document.createElement("button");
+  card.type = "button";
   card.className = "admin-card";
   const date = c.createdAt && c.createdAt.toDate ? c.createdAt.toDate().toLocaleString() : "";
+  const excerpt = (c.complaintText || "").slice(0, 90) + ((c.complaintText || "").length > 90 ? "…" : "");
 
   card.innerHTML = `
     <div class="admin-card-head">
       <div>
-        <h3>${escapeHtml(c.name)} — Class ${escapeHtml(c.studentClass)}</h3>
-        <p class="student-meta">${date}</p>
+        <h3>${escapeHtml(c.name)} <span class="class-tag">Class ${escapeHtml(c.studentClass)}</span></h3>
+        <p class="student-meta">${date} · ${escapeHtml(c.trackingId)}</p>
       </div>
+      ${statusPillHtml(c)}
     </div>
-    <p class="complaint-text">${escapeHtml(c.complaintText)}</p>
-    ${c.fileBase64 ? `<a class="attachment-link" href="${c.fileBase64}" download="${escapeHtml(c.fileName || "attachment")}" target="_blank" rel="noopener">📎 ${escapeHtml(c.fileName || "View attachment")}</a>` : ""}
-    <p class="tracking">Tracking ID: ${escapeHtml(c.trackingId)}</p>
+    <p class="complaint-excerpt">${escapeHtml(excerpt)}</p>
+    ${c.fileBase64 ? `<span class="attachment-flag">📎 Attachment</span>` : ""}
+  `;
+
+  card.addEventListener("click", () => openDetail(c));
+  return card;
+}
+
+function statusPillHtml(c) {
+  const status = c.status || "pending";
+  let cls = "status-pending", label = "Pending";
+  if (status === "approved") { cls = "status-approved"; label = "Approved"; }
+  else if (status === "rejected") { cls = "status-rejected"; label = "Rejected"; }
+  else if (status === "custom") { cls = "status-custom"; label = c.customStatusText || "Custom"; }
+  return `<span class="status-pill ${cls}">${escapeHtml(label)}</span>`;
+}
+
+/* ---------------- Detail modal ---------------- */
+const detailOverlay = document.getElementById("detailOverlay");
+const detailContent = document.getElementById("detailContent");
+const detailCloseBtn = document.getElementById("detailCloseBtn");
+
+function closeDetail() { detailOverlay.classList.remove("open"); }
+detailCloseBtn.addEventListener("click", closeDetail);
+detailOverlay.addEventListener("click", (e) => { if (e.target === detailOverlay) closeDetail(); });
+
+function openDetail(c) {
+  const date = c.createdAt && c.createdAt.toDate ? c.createdAt.toDate().toLocaleString() : "";
+
+  detailContent.innerHTML = `
+    <h2 id="detailName">${escapeHtml(c.name)}</h2>
+    <p class="detail-meta-row">
+      <span><strong>Class:</strong> ${escapeHtml(c.studentClass)}</span>
+      <span><strong>Submitted:</strong> ${date}</span>
+      <span><strong>Tracking ID:</strong> ${escapeHtml(c.trackingId)}</span>
+    </p>
+
+    <div class="detail-complaint-box">${escapeHtml(c.complaintText)}</div>
+
+    <div class="detail-attachment" id="detailAttachment"></div>
 
     <div class="status-controls">
-      <select class="status-select">
+      <select class="status-select" id="detailStatusSelect">
         <option value="pending" ${c.status === "pending" || !c.status ? "selected" : ""}>Pending</option>
         <option value="approved" ${c.status === "approved" ? "selected" : ""}>Approved</option>
         <option value="rejected" ${c.status === "rejected" ? "selected" : ""}>Rejected</option>
         <option value="custom" ${c.status === "custom" ? "selected" : ""}>Custom</option>
       </select>
-      <input type="text" class="custom-text" placeholder="Custom status text"
+      <input type="text" class="custom-text" id="detailCustomText" placeholder="Custom status text"
         value="${escapeHtml(c.customStatusText || "")}"
         style="display:${c.status === "custom" ? "inline-block" : "none"};">
-      <button class="btn btn-primary save-status-btn">Update</button>
-      <span class="save-note">Saved</span>
+      <button class="btn btn-primary" id="detailSaveBtn">Update status</button>
+      <span class="save-note" id="detailSaveNote">Saved</span>
     </div>
+
+    <button class="btn-delete" id="detailDeleteBtn" type="button">Delete this complaint</button>
   `;
 
-  const select = card.querySelector(".status-select");
-  const customInput = card.querySelector(".custom-text");
-  const saveBtn = card.querySelector(".save-status-btn");
-  const saveNote = card.querySelector(".save-note");
+  const attachmentEl = document.getElementById("detailAttachment");
+  if (c.fileBase64) {
+    attachmentEl.innerHTML = `
+      <p class="detail-attachment-label">📎 ${escapeHtml(c.fileName || "Attachment")}</p>
+      <div class="detail-attachment-actions">
+        <a class="btn btn-outline" href="${c.fileBase64}" target="_blank" rel="noopener">Open</a>
+        <a class="btn btn-outline" href="${c.fileBase64}" download="${escapeHtml(c.fileName || "attachment")}">Download</a>
+      </div>
+    `;
+  } else {
+    attachmentEl.innerHTML = `<p class="detail-attachment-label" style="color:var(--grey);">No file attached.</p>`;
+  }
+
+  const select = document.getElementById("detailStatusSelect");
+  const customInput = document.getElementById("detailCustomText");
+  const saveBtn = document.getElementById("detailSaveBtn");
+  const saveNote = document.getElementById("detailSaveNote");
+  const deleteBtn = document.getElementById("detailDeleteBtn");
 
   select.addEventListener("change", () => {
     customInput.style.display = select.value === "custom" ? "inline-block" : "none";
@@ -185,6 +241,7 @@ function buildCard(c) {
       c.customStatusText = customText;
       saveNote.classList.add("show");
       setTimeout(() => saveNote.classList.remove("show"), 1800);
+      renderList();
     } catch (err) {
       console.error(err);
       alert("Could not update status. Please try again.");
@@ -193,7 +250,25 @@ function buildCard(c) {
     }
   });
 
-  return card;
+  deleteBtn.addEventListener("click", async () => {
+    const confirmed = confirm(`Delete this complaint from ${c.name}? This cannot be undone.`);
+    if (!confirmed) return;
+    deleteBtn.disabled = true;
+    deleteBtn.textContent = "Deleting...";
+    try {
+      await db.collection("complaints").doc(c.id).delete();
+      allComplaints = allComplaints.filter(x => x.id !== c.id);
+      closeDetail();
+      renderList();
+    } catch (err) {
+      console.error(err);
+      alert("Could not delete this complaint. Please try again.");
+      deleteBtn.disabled = false;
+      deleteBtn.textContent = "Delete this complaint";
+    }
+  });
+
+  detailOverlay.classList.add("open");
 }
 
 document.querySelectorAll(".filter-chip").forEach(chip => {
