@@ -19,6 +19,8 @@ const dashEmpty = document.getElementById("dashEmpty");
 
 let allComplaints = [];
 let activeFilter = "all";
+let searchQuery = "";
+let sortOrder = "newest";
 
 // True only if firebase-config.js successfully created `auth` and `db`.
 // Checked defensively here so a Firebase problem never silently blocks
@@ -110,19 +112,40 @@ async function loadComplaints() {
   }
 }
 
-function renderList() {
-  const filtered = activeFilter === "all"
-    ? allComplaints
+function getVisibleComplaints() {
+  let list = activeFilter === "all"
+    ? allComplaints.slice()
     : allComplaints.filter(c => (c.status || "pending") === activeFilter);
 
-  adminList.innerHTML = "";
-  dashEmpty.hidden = filtered.length !== 0;
-  if (filtered.length === 0) {
-    dashEmpty.hidden = false;
-    dashEmpty.textContent = "No complaints in this category.";
-    return;
+  if (searchQuery) {
+    list = list.filter(c =>
+      (c.name || "").toLowerCase().includes(searchQuery) ||
+      (c.studentClass || "").toLowerCase().includes(searchQuery) ||
+      (c.trackingId || "").toLowerCase().includes(searchQuery)
+    );
   }
 
+  list.sort((a, b) => {
+    const ta = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
+    const tb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
+    return sortOrder === "oldest" ? ta - tb : tb - ta;
+  });
+
+  return list;
+}
+
+function renderList() {
+  const filtered = getVisibleComplaints();
+
+  adminList.innerHTML = "";
+  if (filtered.length === 0) {
+    dashEmpty.hidden = false;
+    dashEmpty.textContent = allComplaints.length === 0
+      ? "No complaints yet."
+      : "No complaints match your search or filter.";
+    return;
+  }
+  dashEmpty.hidden = true;
   filtered.forEach(c => adminList.appendChild(buildCard(c)));
 }
 
@@ -278,4 +301,70 @@ document.querySelectorAll(".filter-chip").forEach(chip => {
     activeFilter = chip.dataset.filter;
     renderList();
   });
+});
+
+/* ---------------- Search & sort ---------------- */
+const searchInput = document.getElementById("searchInput");
+const sortSelect = document.getElementById("sortSelect");
+
+searchInput.addEventListener("input", () => {
+  searchQuery = searchInput.value.trim().toLowerCase();
+  renderList();
+});
+
+sortSelect.addEventListener("change", () => {
+  sortOrder = sortSelect.value;
+  renderList();
+});
+
+/* ---------------- Export to CSV ---------------- */
+const exportCsvBtn = document.getElementById("exportCsvBtn");
+
+function csvEscape(value) {
+  const s = String(value === undefined || value === null ? "" : value);
+  // Wrap in quotes (and escape internal quotes) if the value contains a
+  // comma, quote, or newline — standard CSV escaping.
+  if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function statusLabelForExport(c) {
+  if (c.status === "custom") return c.customStatusText || "Custom";
+  if (c.status === "approved") return "Approved";
+  if (c.status === "rejected") return "Rejected";
+  return "Pending";
+}
+
+exportCsvBtn.addEventListener("click", () => {
+  const list = getVisibleComplaints(); // exports whatever is currently filtered/searched/sorted
+  if (list.length === 0) {
+    alert("There are no complaints to export with the current filter/search.");
+    return;
+  }
+
+  const header = ["Tracking ID", "Name", "Class", "Status", "Complaint", "Submitted On", "Has Attachment"];
+  const rows = list.map(c => {
+    const date = c.createdAt && c.createdAt.toDate ? c.createdAt.toDate().toLocaleString() : "";
+    return [
+      c.trackingId || "",
+      c.name || "",
+      c.studentClass || "",
+      statusLabelForExport(c),
+      c.complaintText || "",
+      date,
+      c.fileBase64 ? "Yes" : "No"
+    ];
+  });
+
+  const csv = [header, ...rows].map(row => row.map(csvEscape).join(",")).join("\r\n");
+  // Prefix with a UTF-8 BOM so Excel opens Malayalam/special characters correctly.
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `complaints-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 });
