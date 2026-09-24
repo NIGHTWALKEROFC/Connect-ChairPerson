@@ -21,8 +21,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase (compat SDK, loaded via <script> tags in index.html / admin.html)
-if (typeof vtcLog === "function") vtcLog("firebase-config.js running...");
-
 var db, auth;
 try {
   if (typeof firebase === "undefined") {
@@ -31,10 +29,8 @@ try {
   firebase.initializeApp(firebaseConfig);
   db = firebase.firestore();
   auth = firebase.auth();
-  if (typeof vtcLog === "function") vtcLog("Firebase initialized OK for project: " + firebaseConfig.projectId);
 } catch (err) {
-  if (typeof vtcLog === "function") vtcLog("FIREBASE INIT FAILED: " + err.message);
-  else console.error("Firebase init failed:", err);
+  console.error("Firebase init failed:", err);
 }
 
 // NOTE: Firebase Storage is intentionally NOT used in this project.
