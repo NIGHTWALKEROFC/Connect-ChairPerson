@@ -4,10 +4,6 @@
  * (Firestore) with status updates: approved / rejected / custom text.
  */
 
-function log(msg) { if (typeof vtcLog === "function") vtcLog(msg); else console.log(msg); }
-
-log("admin.js running...");
-
 const loginWrap = document.getElementById("loginWrap");
 const dashboard = document.getElementById("dashboard");
 const loginForm = document.getElementById("loginForm");
@@ -26,12 +22,11 @@ let sortOrder = "newest";
 // Checked defensively here so a Firebase problem never silently blocks
 // the rest of this file (like the submit handler below) from running.
 const firebaseReady = (typeof auth !== "undefined" && typeof db !== "undefined" && !!auth && !!db);
-log("firebaseReady = " + firebaseReady);
+if (!firebaseReady) console.error("Firebase is not ready — check js/firebase-config.js and your internet connection.");
 
 /* ---------------- Auth ---------------- */
 if (firebaseReady) {
   auth.onAuthStateChanged(user => {
-    log("onAuthStateChanged fired: " + (user ? ("signed in as " + user.email) : "signed out"));
     if (user) {
       loginWrap.hidden = true;
       dashboard.hidden = false;
@@ -42,35 +37,28 @@ if (firebaseReady) {
       dashboard.hidden = true;
     }
   });
-} else {
-  log("Skipping onAuthStateChanged — Firebase is not ready. Check the errors above.");
 }
 
 // This listener is set up unconditionally (outside the firebaseReady check)
 // so the Sign in button always does SOMETHING visible, even if Firebase
-// itself failed to load — that's what fixes a login button that appeared
-// to do "nothing" when clicked.
+// itself failed to load, instead of silently doing nothing.
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  log("Login form submitted.");
   loginError.hidden = true;
 
   if (!firebaseReady) {
-    log("Cannot sign in — firebaseReady is false.");
-    loginError.textContent = "Firebase didn't load correctly, so sign-in can't run. Open the Diagnostics panel (bottom-left) for the exact error.";
+    loginError.textContent = "Firebase didn't load correctly, so sign-in can't run. Check your internet connection and try refreshing the page.";
     loginError.hidden = false;
     return;
   }
 
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
-  log("Attempting sign in for: " + email);
 
   try {
     await auth.signInWithEmailAndPassword(email, password);
-    log("Sign in call succeeded.");
   } catch (err) {
-    log("Sign in FAILED — code: " + err.code + ", message: " + err.message);
+    console.error(err);
     loginError.textContent = describeAuthError(err);
     loginError.hidden = false;
   }
