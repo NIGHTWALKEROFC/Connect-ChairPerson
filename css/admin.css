@@ -2,6 +2,7 @@
 
 .admin-body { background: var(--ivory); }
 
+.admin-login-wrap[hidden] { display: none; }
 .admin-login-wrap {
   min-height: 100vh;
   display: flex;
@@ -107,27 +108,96 @@
 }
 .filter-chip.active { background: var(--indigo); border-color: var(--indigo); color: #fff; }
 
-.admin-list { display: flex; flex-direction: column; gap: 14px; }
+.admin-list { display: flex; flex-direction: column; gap: 12px; }
 
 .admin-card {
+  display: block;
+  width: 100%;
+  text-align: left;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 18px 20px;
+  padding: 16px 18px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
+.admin-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 6px 18px rgba(27,42,74,0.08);
+}
+.admin-card:active { transform: scale(0.997); }
+
 .admin-card-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
-  flex-wrap: wrap;
 }
-.admin-card h3 { margin: 0; font-size: 1.05rem; }
-.admin-card .student-meta { color: var(--grey); font-size: 0.85rem; margin: 4px 0 12px; }
-.admin-card .complaint-text { color: var(--charcoal); font-size: 0.95rem; line-height: 1.55; margin: 0 0 12px; white-space: pre-wrap; }
-.admin-card .attachment-link { font-size: 0.85rem; color: var(--teal); font-weight: 600; text-decoration: none; }
-.admin-card .attachment-link:hover { text-decoration: underline; }
-.admin-card .tracking { font-size: 0.78rem; color: var(--grey); margin-top: 4px; }
+.admin-card h3 { margin: 0; font-size: 1.02rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.class-tag {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.72rem;
+  color: var(--teal);
+  background: rgba(47,111,111,0.10);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+.admin-card .student-meta { color: var(--grey); font-size: 0.8rem; margin: 4px 0 0; }
+.admin-card .complaint-excerpt { color: var(--charcoal); font-size: 0.9rem; line-height: 1.5; margin: 10px 0 0; }
+.admin-card .attachment-flag {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.76rem;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ---------- Detail modal ---------- */
+#detailModal h2 { margin-bottom: 10px; padding-right: 30px; }
+.detail-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  color: var(--grey);
+  font-size: 0.85rem;
+  margin: 0 0 20px;
+}
+.detail-meta-row strong { color: var(--indigo); font-weight: 600; }
+
+.detail-complaint-box {
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--charcoal);
+  white-space: pre-wrap;
+  margin-bottom: 18px;
+}
+
+.detail-attachment { margin-bottom: 18px; }
+.detail-attachment-label { font-size: 0.88rem; font-weight: 600; color: var(--indigo); margin: 0 0 10px; }
+.detail-attachment-actions { display: flex; gap: 10px; }
+.detail-attachment-actions .btn { padding: 9px 18px; font-size: 0.85rem; }
+
+.btn-delete {
+  display: block;
+  width: 100%;
+  margin-top: 22px;
+  padding: 12px;
+  border: 1.5px solid rgba(179,69,44,0.35);
+  background: rgba(179,69,44,0.06);
+  color: var(--rejected);
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+}
+.btn-delete:hover { background: rgba(179,69,44,0.12); }
+.btn-delete:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .status-controls {
   display: flex;
@@ -156,3 +226,46 @@
 .status-controls .btn { padding: 8px 16px; font-size: 0.85rem; }
 .save-note { font-size: 0.78rem; color: var(--approved); margin-left: 6px; opacity: 0; transition: opacity 0.2s ease; }
 .save-note.show { opacity: 1; }
+
+/* ---------- Diagnostics panel ---------- */
+.debug-panel {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  width: min(420px, calc(100vw - 24px));
+  background: rgba(19, 31, 56, 0.94);
+  color: #cfe0e0;
+  border-radius: 10px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.72rem;
+  z-index: 999;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+.debug-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.debug-panel-head button {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+#debugLog {
+  margin: 0;
+  padding: 10px 12px;
+  max-height: 180px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
