@@ -38,6 +38,8 @@ const TRANSLATIONS = {
     formErrorFile: "Please attach a file smaller than 700KB.",
     formErrorRequired: "Please fill in all fields before submitting.",
     formErrorGeneric: "Something went wrong while sending your complaint. Please try again.",
+    formErrorTooFast: "Please take a moment to fill in the form before submitting.",
+    formErrorCooldown: "You've already submitted a complaint recently. Please wait a few minutes before submitting another.",
 
     upcomingTitle: "Upcoming Projects",
     upcomingEmpty: "No upcoming projects listed right now. Check back soon.",
@@ -96,6 +98,8 @@ const TRANSLATIONS = {
     formErrorFile: "ദയവായി 700KB-ൽ താഴെയുള്ള ഒരു ഫയൽ ഘടിപ്പിക്കുക.",
     formErrorRequired: "സമർപ്പിക്കുന്നതിന് മുൻപ് എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക.",
     formErrorGeneric: "പരാതി അയക്കുന്നതിൽ ഒരു പിശക് സംഭവിച്ചു. വീണ്ടും ശ്രമിക്കുക.",
+    formErrorTooFast: "സമർപ്പിക്കുന്നതിന് മുൻപ് ഫോം പൂരിപ്പിക്കാൻ അല്പം സമയം എടുക്കുക.",
+    formErrorCooldown: "നിങ്ങൾ അടുത്തിടെ ഒരു പരാതി സമർപ്പിച്ചിട്ടുണ്ട്. മറ്റൊന്ന് സമർപ്പിക്കുന്നതിന് മുൻപ് കുറച്ച് മിനിറ്റ് കാത്തിരിക്കുക.",
 
     upcomingTitle: "വരാനിരിക്കുന്ന പദ്ധതികൾ",
     upcomingEmpty: "ഇപ്പോൾ വരാനിരിക്കുന്ന പദ്ധതികളൊന്നും ലിസ്റ്റ് ചെയ്തിട്ടില്ല.",
