@@ -4,6 +4,10 @@
  * (Firestore) with status updates: approved / rejected / custom text.
  */
 
+function log(msg) { if (typeof vtcLog === "function") vtcLog(msg); else console.log(msg); }
+
+log("admin.js running...");
+
 const loginWrap = document.getElementById("loginWrap");
 const dashboard = document.getElementById("dashboard");
 const loginForm = document.getElementById("loginForm");
@@ -16,28 +20,55 @@ const dashEmpty = document.getElementById("dashEmpty");
 let allComplaints = [];
 let activeFilter = "all";
 
-/* ---------------- Auth ---------------- */
-auth.onAuthStateChanged(user => {
-  if (user) {
-    loginWrap.hidden = true;
-    dashboard.hidden = false;
-    adminEmail.textContent = user.email;
-    loadComplaints();
-  } else {
-    loginWrap.hidden = false;
-    dashboard.hidden = true;
-  }
-});
+// True only if firebase-config.js successfully created `auth` and `db`.
+// Checked defensively here so a Firebase problem never silently blocks
+// the rest of this file (like the submit handler below) from running.
+const firebaseReady = (typeof auth !== "undefined" && typeof db !== "undefined" && !!auth && !!db);
+log("firebaseReady = " + firebaseReady);
 
+/* ---------------- Auth ---------------- */
+if (firebaseReady) {
+  auth.onAuthStateChanged(user => {
+    log("onAuthStateChanged fired: " + (user ? ("signed in as " + user.email) : "signed out"));
+    if (user) {
+      loginWrap.hidden = true;
+      dashboard.hidden = false;
+      adminEmail.textContent = user.email;
+      loadComplaints();
+    } else {
+      loginWrap.hidden = false;
+      dashboard.hidden = true;
+    }
+  });
+} else {
+  log("Skipping onAuthStateChanged — Firebase is not ready. Check the errors above.");
+}
+
+// This listener is set up unconditionally (outside the firebaseReady check)
+// so the Sign in button always does SOMETHING visible, even if Firebase
+// itself failed to load — that's what fixes a login button that appeared
+// to do "nothing" when clicked.
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  log("Login form submitted.");
   loginError.hidden = true;
+
+  if (!firebaseReady) {
+    log("Cannot sign in — firebaseReady is false.");
+    loginError.textContent = "Firebase didn't load correctly, so sign-in can't run. Open the Diagnostics panel (bottom-left) for the exact error.";
+    loginError.hidden = false;
+    return;
+  }
+
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
+  log("Attempting sign in for: " + email);
+
   try {
     await auth.signInWithEmailAndPassword(email, password);
+    log("Sign in call succeeded.");
   } catch (err) {
-    console.error(err);
+    log("Sign in FAILED — code: " + err.code + ", message: " + err.message);
     loginError.textContent = describeAuthError(err);
     loginError.hidden = false;
   }
@@ -64,7 +95,7 @@ function describeAuthError(err) {
   return (err && err.message) ? err.message : "Sign in failed. Please try again.";
 }
 
-logoutBtn.addEventListener("click", () => auth.signOut());
+logoutBtn.addEventListener("click", () => { if (firebaseReady) auth.signOut(); });
 
 /* ---------------- Load & render complaints ---------------- */
 async function loadComplaints() {
