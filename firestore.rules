@@ -2,12 +2,23 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Complaints: anyone can create (submit) a complaint and read complaints
-    // (needed for the "My Complaints" tracking-ID lookup, which has no login).
-    // Only a signed-in admin can edit (change status) or delete.
+    // Complaints:
+    //  - Anyone can CREATE (submit) a complaint.
+    //  - GET (fetch one specific complaint by its exact ID/tracking ID) is
+    //    public — this is what powers "My Complaints" tracking, with no
+    //    login needed. The tracking ID itself is a long random string, so
+    //    it acts like a private access code: knowing it lets you read that
+    //    one complaint, but it can't be guessed or browsed to.
+    //  - LIST (browse/query the whole collection) requires an admin login.
+    //    This is the important part: without this line, anyone could call
+    //    Firestore directly (bypassing the website entirely) and read every
+    //    complaint ever submitted. Restricting LIST to signed-in admins
+    //    closes that off completely.
+    //  - Only a signed-in admin can UPDATE (change status) or DELETE.
     match /complaints/{complaintId} {
       allow create: if true;
-      allow read: if true;
+      allow get: if true;
+      allow list: if request.auth != null;
       allow update, delete: if request.auth != null;
     }
 
