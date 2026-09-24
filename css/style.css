@@ -310,6 +310,17 @@ input[type="file"] { padding: 9px 10px; }
 
 .file-error, .form-error { color: var(--rejected); font-size: 0.85rem; margin: 4px 0 0; }
 
+/* Honeypot spam trap — hidden from real users, but present in the DOM
+   (not display:none) so form-filling bots still find and fill it. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
