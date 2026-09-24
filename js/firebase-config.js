@@ -21,10 +21,21 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase (compat SDK, loaded via <script> tags in index.html / admin.html)
-firebase.initializeApp(firebaseConfig);
+if (typeof vtcLog === "function") vtcLog("firebase-config.js running...");
 
-const db = firebase.firestore();
-const auth = firebase.auth();
+var db, auth;
+try {
+  if (typeof firebase === "undefined") {
+    throw new Error("The firebase object is undefined — the Firebase SDK <script> tags didn't load. Check your internet connection, ad-blocker, or the script tags in the HTML file.");
+  }
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  auth = firebase.auth();
+  if (typeof vtcLog === "function") vtcLog("Firebase initialized OK for project: " + firebaseConfig.projectId);
+} catch (err) {
+  if (typeof vtcLog === "function") vtcLog("FIREBASE INIT FAILED: " + err.message);
+  else console.error("Firebase init failed:", err);
+}
 
 // NOTE: Firebase Storage is intentionally NOT used in this project.
 // Storage requires the paid "Blaze" plan even for small usage.
