@@ -155,6 +155,19 @@ const submitBtn = document.getElementById("formSubmitBtn");
 // original file, so 700KB of real file data safely fits.
 const MAX_FILE_BYTES = 700 * 1024;
 
+/* ---------------- Spam protection ----------------
+   Three lightweight, free (no extra service) layers:
+   1. Honeypot field (#fWebsite) — invisible to people, bots often fill it.
+   2. Minimum fill time — reject a submit that happens implausibly fast
+      after the form opened (real people take at least a few seconds).
+   3. Cooldown — one submission per device per COOLDOWN_MS, tracked in
+      localStorage, to stop rapid repeat/flood submissions.
+--------------------------------------------------- */
+const MIN_FILL_MS = 4000;              // 4 seconds minimum before a submit is accepted
+const COOLDOWN_MS = 2 * 60 * 1000;     // 2 minutes between submissions, per device
+const LAST_SUBMIT_KEY = "vtc_last_submit_at";
+let formOpenedAt = 0;
+
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -171,6 +184,7 @@ function openForm() {
   complaintForm.reset();
   fileError.hidden = true;
   formGenericError.hidden = true;
+  formOpenedAt = Date.now();
 }
 function closeForm() { formOverlay.classList.remove("open"); }
 
@@ -199,6 +213,31 @@ function generateTrackingId() {
 complaintForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   formGenericError.hidden = true;
+
+  // 1. Honeypot: if this hidden field has anything in it, it was a bot.
+  // Pretend success (so the bot doesn't learn to adapt) but save nothing.
+  const honeypot = document.getElementById("fWebsite").value;
+  if (honeypot) {
+    document.getElementById("trackingIdDisplay").textContent = generateTrackingId();
+    formStep.hidden = true;
+    formSuccessStep.hidden = false;
+    return;
+  }
+
+  // 2. Minimum fill time.
+  if (Date.now() - formOpenedAt < MIN_FILL_MS) {
+    formGenericError.textContent = TRANSLATIONS[currentLang].formErrorTooFast;
+    formGenericError.hidden = false;
+    return;
+  }
+
+  // 3. Cooldown between submissions on this device.
+  const lastSubmit = Number(localStorage.getItem(LAST_SUBMIT_KEY) || 0);
+  if (Date.now() - lastSubmit < COOLDOWN_MS) {
+    formGenericError.textContent = TRANSLATIONS[currentLang].formErrorCooldown;
+    formGenericError.hidden = false;
+    return;
+  }
 
   const name = document.getElementById("fName").value.trim();
   const studentClass = document.getElementById("fClass").value.trim();
@@ -245,6 +284,7 @@ complaintForm.addEventListener("submit", async (e) => {
     });
 
     saveTrackingIdLocally(trackingId);
+    localStorage.setItem(LAST_SUBMIT_KEY, String(Date.now()));
 
     document.getElementById("trackingIdDisplay").textContent = trackingId;
     formStep.hidden = true;
