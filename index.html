@@ -81,9 +81,15 @@
           <textarea id="fComplaint" name="complaint" rows="5" required></textarea>
         </div>
         <div class="field">
-          <label for="fFile" data-i18n="labelAttachment">Attach a photo or document (optional, under 5MB)</label>
+          <label for="fFile" data-i18n="labelAttachment">Attach a photo or document (optional, under 700KB)</label>
           <input type="file" id="fFile" name="attachment" accept="image/*,.pdf,.doc,.docx">
           <p class="file-error" id="fileError" hidden data-i18n="formErrorFile"></p>
+        </div>
+        <!-- Honeypot spam trap: invisible to real people, but bots that
+             auto-fill every field will fill this in. See js/main.js. -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="fWebsite">Leave this field blank</label>
+          <input type="text" id="fWebsite" name="website" tabindex="-1" autocomplete="off">
         </div>
         <p class="form-error" id="formGenericError" hidden></p>
         <div class="modal-actions">
