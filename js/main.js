@@ -204,7 +204,11 @@ fileInput.addEventListener("change", () => {
 });
 
 function generateTrackingId() {
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  // The random part is now also the "access key" for this complaint (see
+  // firestore.rules — reading a complaint requires knowing its exact ID),
+  // so it uses 8 random characters (36^8 ≈ 2.8 trillion combinations)
+  // instead of a short, easily-guessable one.
+  const rand = Array.from({ length: 8 }, () => Math.floor(Math.random() * 36).toString(36)).join("").toUpperCase();
   const date = new Date();
   const stamp = `${date.getFullYear().toString().slice(2)}${(date.getMonth()+1).toString().padStart(2,"0")}${date.getDate().toString().padStart(2,"0")}`;
   return `VTC-${stamp}-${rand}`;
@@ -269,7 +273,11 @@ complaintForm.addEventListener("submit", async (e) => {
       fileType = file.type;
     }
 
-    await db.collection("complaints").add({
+    // trackingId is used as the actual Firestore document ID (not just a
+    // field) — see firestore.rules. This means reading a complaint back
+    // requires knowing its exact ID; there is no way to list/browse all
+    // complaints without being signed in as admin.
+    await db.collection("complaints").doc(trackingId).set({
       trackingId,
       name,
       studentClass,
@@ -343,9 +351,9 @@ async function renderMyComplaintsFromStorage() {
 
   for (const id of ids) {
     try {
-      const snap = await db.collection("complaints").where("trackingId", "==", id).limit(1).get();
-      if (!snap.empty) {
-        listEl.insertAdjacentHTML("beforeend", complaintCardHtml(snap.docs[0].data()));
+      const doc = await db.collection("complaints").doc(id).get();
+      if (doc.exists) {
+        listEl.insertAdjacentHTML("beforeend", complaintCardHtml(doc.data()));
       }
     } catch (err) { console.error(err); }
   }
@@ -360,11 +368,11 @@ document.getElementById("trackBtn").addEventListener("click", async () => {
   if (!id) return;
 
   try {
-    const snap = await db.collection("complaints").where("trackingId", "==", id).limit(1).get();
-    if (snap.empty) {
+    const doc = await db.collection("complaints").doc(id).get();
+    if (!doc.exists) {
       notFoundEl.hidden = false;
     } else {
-      resultEl.innerHTML = complaintCardHtml(snap.docs[0].data());
+      resultEl.innerHTML = complaintCardHtml(doc.data());
       saveTrackingIdLocally(id);
     }
   } catch (err) {
