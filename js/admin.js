@@ -30,13 +30,27 @@ if (!firebaseReady) console.error("Firebase is not ready — check js/firebase-c
    refreshes the login behind the scenes). To force a fresh login every
    24 hours instead, we stamp the time of each successful sign-in in
    localStorage and check it every time the page loads, plus periodically
-   while it stays open. */
+   while it stays open.
+
+   `justSignedIn` avoids a race condition: onAuthStateChanged can fire
+   before the code right after `await signInWithEmailAndPassword(...)`
+   gets to run, so stamping the login time only after that await was
+   unreliable — it could see the OLD (or missing) timestamp and instantly
+   sign the person right back out, which looked like "correct password
+   does nothing." Setting the flag BEFORE calling signIn, and having
+   onAuthStateChanged itself do the stamping, removes that race entirely. */
 const ADMIN_SESSION_MS = 24 * 60 * 60 * 1000; // 24 hours
 const LOGIN_AT_KEY = "vtc_admin_login_at";
+let justSignedIn = false;
 
 if (firebaseReady) {
   auth.onAuthStateChanged(user => {
     if (user) {
+      if (justSignedIn) {
+        localStorage.setItem(LOGIN_AT_KEY, String(Date.now()));
+        justSignedIn = false;
+      }
+
       const loginAt = Number(localStorage.getItem(LOGIN_AT_KEY) || 0);
       const expired = !loginAt || (Date.now() - loginAt > ADMIN_SESSION_MS);
       if (expired) {
@@ -82,9 +96,12 @@ loginForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("loginPassword").value;
 
   try {
+    justSignedIn = true;
     await auth.signInWithEmailAndPassword(email, password);
-    localStorage.setItem(LOGIN_AT_KEY, String(Date.now()));
+    // onAuthStateChanged (above) takes it from here: it stamps the login
+    // time and switches the screen to the dashboard.
   } catch (err) {
+    justSignedIn = false;
     console.error(err);
     loginError.textContent = describeAuthError(err);
     loginError.hidden = false;
