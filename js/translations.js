@@ -8,9 +8,9 @@
 
 const TRANSLATIONS = {
   en: {
-    siteTitle: "Voice to the Chair",
+    siteTitle: "Paraathippetti",
     welcomeHeading: "Welcome",
-    welcomeSub: "A direct line between students and the chairperson's office.",
+    welcomeSub: "A direct line between students and the chairperson.",
     connectBtn: "Connect with Chairperson",
     callBtn: "Call Chairperson",
     menuLabel: "Menu",
@@ -33,7 +33,7 @@ const TRANSLATIONS = {
     submittingBtn: "Sending...",
     cancelBtn: "Cancel",
     formSuccessTitle: "Received.",
-    formSuccessBody: "Thank you. Your complaint has been sent to the chairperson's office. Save this tracking ID to check its status later:",
+    formSuccessBody: "Thank you. Your complaint has been sent to the chairperson. Save this tracking ID to check its status later:",
     formSuccessClose: "Done",
     copyIdBtn: "Copy",
     copyIdCopied: "Copied!",
@@ -61,7 +61,7 @@ const TRANSLATIONS = {
     submittedOn: "Submitted on",
     trackingIdLabel: "Tracking ID",
     trackNotFound: "No complaint found with that tracking ID. Please check and try again.",
-    adminReplyLabel: "Reply from the chairperson's office:",
+    adminReplyLabel: "Reply from the chairperson:",
 
     status_pending: "Pending",
     status_approved: "Approved",
@@ -71,9 +71,9 @@ const TRANSLATIONS = {
     adminLinkLabel: "Admin"
   },
   ml: {
-    siteTitle: "ചെയറിലേക്കൊരു ശബ്ദം",
+    siteTitle: "പരാതിപ്പെട്ടി",
     welcomeHeading: "സ്വാഗതം",
-    welcomeSub: "വിദ്യാർത്ഥികളും ചെയർപേഴ്‌സൻ ഓഫീസും തമ്മിലുള്ള നേരിട്ടുള്ള ബന്ധം.",
+    welcomeSub: "വിദ്യാർത്ഥികളും ചെയർപേഴ്‌സണും തമ്മിലുള്ള നേരിട്ടുള്ള ബന്ധം.",
     connectBtn: "ചെയർപേഴ്‌സണുമായി ബന്ധപ്പെടുക",
     callBtn: "ചെയർപേഴ്‌സണെ വിളിക്കുക",
     menuLabel: "മെനു",
@@ -96,7 +96,7 @@ const TRANSLATIONS = {
     submittingBtn: "അയക്കുന്നു...",
     cancelBtn: "റദ്ദാക്കുക",
     formSuccessTitle: "ലഭിച്ചു.",
-    formSuccessBody: "നന്ദി. നിങ്ങളുടെ പരാതി ചെയർപേഴ്‌സൻ ഓഫീസിലേക്ക് അയച്ചിട്ടുണ്ട്. പിന്നീട് സ്ഥിതി പരിശോധിക്കാൻ ഈ ട്രാക്കിംഗ് ഐഡി സൂക്ഷിക്കുക:",
+    formSuccessBody: "നന്ദി. നിങ്ങളുടെ പരാതി ചെയർപേഴ്‌സണ് അയച്ചിട്ടുണ്ട്. പിന്നീട് സ്ഥിതി പരിശോധിക്കാൻ ഈ ട്രാക്കിംഗ് ഐഡി സൂക്ഷിക്കുക:",
     formSuccessClose: "ശരി",
     copyIdBtn: "കോപ്പി ചെയ്യുക",
     copyIdCopied: "കോപ്പി ചെയ്തു!",
@@ -124,7 +124,7 @@ const TRANSLATIONS = {
     submittedOn: "സമർപ്പിച്ച തീയതി",
     trackingIdLabel: "ട്രാക്കിംഗ് ഐഡി",
     trackNotFound: "ആ ട്രാക്കിംഗ് ഐഡിയിൽ ഒരു പരാതിയും കണ്ടെത്തിയില്ല. പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.",
-    adminReplyLabel: "ചെയർപേഴ്‌സൻ ഓഫീസിൽ നിന്നുള്ള മറുപടി:",
+    adminReplyLabel: "ചെയർപേഴ്‌സണിൽ നിന്നുള്ള മറുപടി:",
 
     status_pending: "പരിശോധനയിൽ",
     status_approved: "അംഗീകരിച്ചു",
