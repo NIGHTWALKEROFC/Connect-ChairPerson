@@ -30,6 +30,7 @@ function applyLanguage(lang) {
   });
 
   document.getElementById("langToggle").textContent = lang === "en" ? "മല" : "EN";
+  document.title = dict.siteTitle;
 }
 
 document.getElementById("langToggle").addEventListener("click", () => {
