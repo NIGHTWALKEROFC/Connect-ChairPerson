@@ -23,8 +23,9 @@ service cloud.firestore {
     }
 
     // Upcoming projects, completed projects, funds: public read-only.
-    // Add/edit these documents yourself from the Firebase Console, or while
-    // signed in as admin (only signed-in users can write).
+    // Manage these directly from the admin panel's "Site Content" tab
+    // (or from the Firebase Console if you prefer) — either way, only a
+    // signed-in admin can add, edit, or delete entries.
     match /projects_upcoming/{docId} {
       allow read: if true;
       allow write: if request.auth != null;
