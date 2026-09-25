@@ -78,6 +78,10 @@ function openPanel(panelId) {
   document.getElementById(panelId).classList.add("active");
   panelOverlay.classList.add("open");
 
+  // My Complaints has much shorter content than the project/fund lists, so
+  // it uses a smaller, snug-fitting box instead of the same wide one.
+  document.querySelector(".panel").classList.toggle("panel--compact", panelId === "panelMyComplaints");
+
   if (panelId === "panelUpcoming") loadListSection("projects_upcoming", "upcomingList", "upcomingEmpty", "project");
   if (panelId === "panelDone") loadListSection("projects_done", "doneList", "doneEmpty", "project");
   if (panelId === "panelFunds") loadListSection("funds", "fundsList", "fundsEmpty", "fund");
