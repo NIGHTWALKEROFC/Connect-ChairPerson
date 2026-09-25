@@ -31,6 +31,15 @@ function applyLanguage(lang) {
 
   document.getElementById("langToggle").textContent = lang === "en" ? "മല" : "EN";
   document.title = dict.siteTitle;
+
+  // The welcome quote isn't a data-i18n element (its text is picked at
+  // random, not fixed), so it needs its own translation step here: keep
+  // showing the SAME quote, just switch it to the other language's text,
+  // which was stored on the element when it was first chosen.
+  const quoteEl = document.getElementById("quoteText");
+  if (quoteEl && quoteEl.dataset.en) {
+    quoteEl.textContent = lang === "ml" ? quoteEl.dataset.ml : quoteEl.dataset.en;
+  }
 }
 
 document.getElementById("langToggle").addEventListener("click", () => {
