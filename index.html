@@ -102,7 +102,11 @@
     <div id="formSuccessStep" hidden>
       <h2 data-i18n="formSuccessTitle">Received.</h2>
       <p data-i18n="formSuccessBody">Thank you. Your complaint has been sent.</p>
-      <p class="tracking-id-box" id="trackingIdDisplay"></p>
+      <div class="tracking-id-row">
+        <p class="tracking-id-box" id="trackingIdDisplay"></p>
+        <button type="button" class="btn btn-outline copy-id-btn" id="copyIdBtn" data-i18n="copyIdBtn">Copy</button>
+      </div>
+      <p class="tracking-warning" data-i18n="trackingWarning">⚠ Save this ID somewhere safe. Without it, you cannot check your complaint's status later, and we cannot recover a lost tracking ID.</p>
       <div class="modal-actions">
         <button type="button" class="btn btn-primary" id="formSuccessCloseBtn" data-i18n="formSuccessClose">Done</button>
       </div>
@@ -135,16 +139,13 @@
 
     <div class="panel-section" id="panelMyComplaints">
       <h2 data-i18n="myComplaintsTitle">My Complaints</h2>
-      <p class="modal-sub" data-i18n="myComplaintsSub">Enter a tracking ID to check its status.</p>
+      <p class="modal-sub" data-i18n="myComplaintsSub">Enter your tracking ID to check its status. Only someone with the exact ID can see a complaint — nothing is shown here without it.</p>
       <div class="track-row">
         <input type="text" id="trackInput" data-i18n-placeholder="trackingPlaceholder" placeholder="Enter your tracking ID">
         <button id="trackBtn" class="btn btn-primary" data-i18n="trackBtn">Check status</button>
       </div>
       <p class="empty-note" id="trackNotFound" data-i18n="trackNotFound" hidden></p>
       <div id="trackResult"></div>
-      <hr class="divider">
-      <div class="list" id="myComplaintsList"></div>
-      <p class="empty-note" id="myComplaintsEmpty" data-i18n="myComplaintsEmpty" hidden></p>
     </div>
   </div>
 </div>
