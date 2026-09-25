@@ -304,6 +304,10 @@ input, textarea { font-family: inherit; }
   box-shadow: 0 20px 60px rgba(19,31,56,0.25);
   z-index: 61;
 }
+.panel--compact {
+  width: min(400px, 92vw);
+  padding: 28px 26px;
+}
 
 .modal-close {
   position: absolute;
@@ -433,6 +437,7 @@ input[type="file"] { padding: 9px 10px; }
   .track-row .btn { width: 100%; justify-content: center; }
 }
 .divider { border: none; border-top: 1px solid var(--line); margin: 26px 0 6px; }
+.input-hint { font-size: 0.78rem; color: var(--grey); margin: 8px 0 0; font-family: 'Lora', serif; font-style: italic; }
 
 .status-pill {
   display: inline-block;
