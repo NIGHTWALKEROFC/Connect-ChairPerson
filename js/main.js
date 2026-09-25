@@ -386,6 +386,65 @@ document.getElementById("trackBtn").addEventListener("click", async () => {
   }
 });
 
+/* ---------------- Share ---------------- */
+const shareOverlay = document.getElementById("shareOverlay");
+const shareBtn = document.getElementById("shareBtn");
+const shareCloseBtn = document.getElementById("shareCloseBtn");
+const shareNativeBtn = document.getElementById("shareNativeBtn");
+const shareCopyBtn = document.getElementById("shareCopyBtn");
+const shareQrCode = document.getElementById("shareQrCode");
+let qrRendered = false;
+
+function openShare() {
+  shareOverlay.classList.add("open");
+  if (navigator.share) shareNativeBtn.hidden = false;
+
+  if (!qrRendered) {
+    try {
+      const qr = qrcode(0, "M"); // type 0 = auto-size, M = medium error correction
+      qr.addData(window.location.href);
+      qr.make();
+      shareQrCode.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2 });
+      qrRendered = true;
+    } catch (err) {
+      console.error(err);
+      shareQrCode.textContent = "";
+    }
+  }
+}
+function closeShare() { shareOverlay.classList.remove("open"); }
+
+shareBtn.addEventListener("click", openShare);
+shareCloseBtn.addEventListener("click", closeShare);
+shareOverlay.addEventListener("click", (e) => { if (e.target === shareOverlay) closeShare(); });
+
+shareNativeBtn.addEventListener("click", async () => {
+  try {
+    await navigator.share({ title: document.title, url: window.location.href });
+  } catch (err) {
+    // Person cancelled the share sheet — not an error, do nothing.
+  }
+});
+
+shareCopyBtn.addEventListener("click", async () => {
+  const url = window.location.href;
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch (err) {
+    const ta = document.createElement("textarea");
+    ta.value = url;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) { console.error(e); }
+    document.body.removeChild(ta);
+  }
+  const original = shareCopyBtn.textContent;
+  shareCopyBtn.textContent = TRANSLATIONS[currentLang].copyIdCopied;
+  setTimeout(() => { shareCopyBtn.textContent = original; }, 1800);
+});
+
 /* ---------------- Init ---------------- */
 applyLanguage(currentLang);
 showRandomQuote();
