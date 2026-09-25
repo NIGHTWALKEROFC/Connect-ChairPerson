@@ -1,7 +1,8 @@
 /**
  * admin.js
- * Handles admin login (Firebase Auth) and the complaints dashboard
- * (Firestore) with status updates: approved / rejected / custom text.
+ * Handles admin login (Firebase Auth, 24-hour session), the complaints
+ * dashboard (Firestore) with status updates + replies, and the Site
+ * Content manager (Upcoming Projects / Completed Projects / Funds).
  */
 
 const loginWrap = document.getElementById("loginWrap");
@@ -24,19 +25,44 @@ let sortOrder = "newest";
 const firebaseReady = (typeof auth !== "undefined" && typeof db !== "undefined" && !!auth && !!db);
 if (!firebaseReady) console.error("Firebase is not ready — check js/firebase-config.js and your internet connection.");
 
-/* ---------------- Auth ---------------- */
+/* ---------------- Auth + 24-hour session expiry ----------------
+   Firebase, by default, keeps an admin signed in indefinitely (it silently
+   refreshes the login behind the scenes). To force a fresh login every
+   24 hours instead, we stamp the time of each successful sign-in in
+   localStorage and check it every time the page loads, plus periodically
+   while it stays open. */
+const ADMIN_SESSION_MS = 24 * 60 * 60 * 1000; // 24 hours
+const LOGIN_AT_KEY = "vtc_admin_login_at";
+
 if (firebaseReady) {
   auth.onAuthStateChanged(user => {
     if (user) {
+      const loginAt = Number(localStorage.getItem(LOGIN_AT_KEY) || 0);
+      const expired = !loginAt || (Date.now() - loginAt > ADMIN_SESSION_MS);
+      if (expired) {
+        localStorage.removeItem(LOGIN_AT_KEY);
+        auth.signOut();
+        return;
+      }
       loginWrap.hidden = true;
       dashboard.hidden = false;
       adminEmail.textContent = user.email;
       loadComplaints();
+      loadAllContentSections();
     } else {
+      localStorage.removeItem(LOGIN_AT_KEY);
       loginWrap.hidden = false;
       dashboard.hidden = true;
     }
   });
+
+  // Also check periodically in case the tab is left open past 24 hours.
+  setInterval(() => {
+    const loginAt = Number(localStorage.getItem(LOGIN_AT_KEY) || 0);
+    if (auth.currentUser && loginAt && (Date.now() - loginAt > ADMIN_SESSION_MS)) {
+      auth.signOut();
+    }
+  }, 5 * 60 * 1000);
 }
 
 // This listener is set up unconditionally (outside the firebaseReady check)
@@ -57,6 +83,7 @@ loginForm.addEventListener("submit", async (e) => {
 
   try {
     await auth.signInWithEmailAndPassword(email, password);
+    localStorage.setItem(LOGIN_AT_KEY, String(Date.now()));
   } catch (err) {
     console.error(err);
     loginError.textContent = describeAuthError(err);
@@ -81,11 +108,22 @@ function describeAuthError(err) {
   if (code === "auth/network-request-failed") {
     return "Network error — check your internet connection.";
   }
-  // Fallback: show Firebase's own message so the exact cause is visible.
   return (err && err.message) ? err.message : "Sign in failed. Please try again.";
 }
 
 logoutBtn.addEventListener("click", () => { if (firebaseReady) auth.signOut(); });
+
+/* ---------------- Tabs ---------------- */
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".tab-panel").forEach(p => { p.hidden = true; });
+    const panel = document.getElementById(btn.dataset.tab);
+    panel.hidden = false;
+    if (btn.dataset.tab === "tabContent") loadAllContentSections();
+  });
+});
 
 /* ---------------- Load & render complaints ---------------- */
 async function loadComplaints() {
@@ -159,7 +197,10 @@ function buildCard(c) {
       ${statusPillHtml(c)}
     </div>
     <p class="complaint-excerpt">${escapeHtml(excerpt)}</p>
-    ${c.fileBase64 ? `<span class="attachment-flag">📎 Attachment</span>` : ""}
+    <div class="card-flags">
+      ${c.fileBase64 ? `<span class="attachment-flag">📎 Attachment</span>` : ""}
+      ${c.adminReply ? `<span class="reply-flag">💬 Replied</span>` : ""}
+    </div>
   `;
 
   card.addEventListener("click", () => openDetail(c));
@@ -199,6 +240,15 @@ function openDetail(c) {
 
     <div class="detail-attachment" id="detailAttachment"></div>
 
+    <div class="detail-reply-block">
+      <label for="detailReplyText" class="detail-attachment-label">Reply to this complaint</label>
+      <textarea id="detailReplyText" rows="3" placeholder="Write a reply — the student will see this when they check their tracking ID.">${escapeHtml(c.adminReply || "")}</textarea>
+      <div class="detail-reply-actions">
+        <button class="btn btn-primary" id="detailReplySaveBtn" type="button">Save Reply</button>
+        <span class="save-note" id="detailReplySaveNote">Saved</span>
+      </div>
+    </div>
+
     <div class="status-controls">
       <select class="status-select" id="detailStatusSelect">
         <option value="pending" ${c.status === "pending" || !c.status ? "selected" : ""}>Pending</option>
@@ -234,6 +284,9 @@ function openDetail(c) {
   const saveBtn = document.getElementById("detailSaveBtn");
   const saveNote = document.getElementById("detailSaveNote");
   const deleteBtn = document.getElementById("detailDeleteBtn");
+  const replyText = document.getElementById("detailReplyText");
+  const replySaveBtn = document.getElementById("detailReplySaveBtn");
+  const replySaveNote = document.getElementById("detailReplySaveNote");
 
   select.addEventListener("change", () => {
     customInput.style.display = select.value === "custom" ? "inline-block" : "none";
@@ -258,6 +311,26 @@ function openDetail(c) {
       alert("Could not update status. Please try again.");
     } finally {
       saveBtn.disabled = false;
+    }
+  });
+
+  replySaveBtn.addEventListener("click", async () => {
+    const text = replyText.value.trim();
+    replySaveBtn.disabled = true;
+    try {
+      await db.collection("complaints").doc(c.id).update({
+        adminReply: text,
+        adminReplyAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      c.adminReply = text;
+      replySaveNote.classList.add("show");
+      setTimeout(() => replySaveNote.classList.remove("show"), 1800);
+      renderList();
+    } catch (err) {
+      console.error(err);
+      alert("Could not save the reply. Please try again.");
+    } finally {
+      replySaveBtn.disabled = false;
     }
   });
 
@@ -310,8 +383,6 @@ const exportCsvBtn = document.getElementById("exportCsvBtn");
 
 function csvEscape(value) {
   const s = String(value === undefined || value === null ? "" : value);
-  // Wrap in quotes (and escape internal quotes) if the value contains a
-  // comma, quote, or newline — standard CSV escaping.
   if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
   return s;
 }
@@ -324,13 +395,13 @@ function statusLabelForExport(c) {
 }
 
 exportCsvBtn.addEventListener("click", () => {
-  const list = getVisibleComplaints(); // exports whatever is currently filtered/searched/sorted
+  const list = getVisibleComplaints();
   if (list.length === 0) {
     alert("There are no complaints to export with the current filter/search.");
     return;
   }
 
-  const header = ["Tracking ID", "Name", "Class", "Status", "Complaint", "Submitted On", "Has Attachment"];
+  const header = ["Tracking ID", "Name", "Class", "Status", "Complaint", "Admin Reply", "Submitted On", "Has Attachment"];
   const rows = list.map(c => {
     const date = c.createdAt && c.createdAt.toDate ? c.createdAt.toDate().toLocaleString() : "";
     return [
@@ -339,13 +410,13 @@ exportCsvBtn.addEventListener("click", () => {
       c.studentClass || "",
       statusLabelForExport(c),
       c.complaintText || "",
+      c.adminReply || "",
       date,
       c.fileBase64 ? "Yes" : "No"
     ];
   });
 
   const csv = [header, ...rows].map(row => row.map(csvEscape).join(",")).join("\r\n");
-  // Prefix with a UTF-8 BOM so Excel opens Malayalam/special characters correctly.
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -355,4 +426,146 @@ exportCsvBtn.addEventListener("click", () => {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+});
+
+/* ================= SITE CONTENT MANAGER =================
+   Lets the admin add / edit / delete entries in the three collections
+   that power the public site's Upcoming Projects, Completed Projects,
+   and Funds sections — no need to touch the Firebase Console anymore. */
+
+const CONTENT_CONFIG = {
+  projects_upcoming: {
+    fields: ["title", "description"],
+    display: d => `<h3>${escapeHtml(d.title)}</h3><p>${escapeHtml(d.description)}</p>`
+  },
+  projects_done: {
+    fields: ["title", "description"],
+    display: d => `<h3>${escapeHtml(d.title)}</h3><p>${escapeHtml(d.description)}</p>`
+  },
+  funds: {
+    fields: ["title", "collected", "usedFor"],
+    display: d => `<h3>${escapeHtml(d.title)}</h3><p>Collected: ${escapeHtml(d.collected)}</p><p>Used for: ${escapeHtml(d.usedFor)}</p>`
+  }
+};
+
+function loadAllContentSections() {
+  Object.keys(CONTENT_CONFIG).forEach(loadContentSection);
+}
+
+async function loadContentSection(collectionName) {
+  const container = document.getElementById(`contentList_${collectionName}`);
+  if (!container) return;
+  container.innerHTML = `<p class="empty-note">Loading…</p>`;
+  try {
+    const snap = await db.collection(collectionName).orderBy("order", "asc").get();
+    container.innerHTML = "";
+    if (snap.empty) {
+      container.innerHTML = `<p class="empty-note">No entries yet — add one above.</p>`;
+      return;
+    }
+    snap.forEach(doc => container.appendChild(buildContentItem(collectionName, doc.id, doc.data())));
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p class="empty-note">Could not load this section. Check your Firestore rules and connection.</p>`;
+  }
+}
+
+function buildContentItem(collectionName, id, data) {
+  const config = CONTENT_CONFIG[collectionName];
+  const item = document.createElement("div");
+  item.className = "content-item";
+  item.innerHTML = `
+    <div class="content-item-display">${config.display(data)}</div>
+    <div class="content-item-actions">
+      <button type="button" class="btn-mini edit-btn">Edit</button>
+      <button type="button" class="btn-mini delete-btn">Delete</button>
+    </div>
+  `;
+
+  item.querySelector(".delete-btn").addEventListener("click", async () => {
+    const ok = confirm(`Delete "${data.title}"? This cannot be undone.`);
+    if (!ok) return;
+    try {
+      await db.collection(collectionName).doc(id).delete();
+      item.remove();
+    } catch (err) {
+      console.error(err);
+      alert("Could not delete this entry. Please try again.");
+    }
+  });
+
+  item.querySelector(".edit-btn").addEventListener("click", () => {
+    startEditContentItem(item, collectionName, id, data);
+  });
+
+  return item;
+}
+
+function startEditContentItem(item, collectionName, id, data) {
+  const config = CONTENT_CONFIG[collectionName];
+  const fieldsHtml = config.fields.map(f => {
+    const val = escapeHtml(data[f] || "");
+    return f === "description"
+      ? `<textarea name="${f}" rows="2">${val}</textarea>`
+      : `<input type="text" name="${f}" value="${val}">`;
+  }).join("");
+
+  item.innerHTML = `
+    <div class="content-item-edit-form">
+      ${fieldsHtml}
+      <div class="content-item-actions">
+        <button type="button" class="btn-mini save-edit-btn">Save</button>
+        <button type="button" class="btn-mini cancel-edit-btn">Cancel</button>
+      </div>
+    </div>
+  `;
+
+  item.querySelector(".cancel-edit-btn").addEventListener("click", () => {
+    item.replaceWith(buildContentItem(collectionName, id, data));
+  });
+
+  item.querySelector(".save-edit-btn").addEventListener("click", async () => {
+    const updated = {};
+    config.fields.forEach(f => {
+      updated[f] = item.querySelector(`[name="${f}"]`).value.trim();
+    });
+    try {
+      await db.collection(collectionName).doc(id).update(updated);
+      const newData = Object.assign({}, data, updated);
+      item.replaceWith(buildContentItem(collectionName, id, newData));
+    } catch (err) {
+      console.error(err);
+      alert("Could not save changes. Please try again.");
+    }
+  });
+}
+
+document.querySelectorAll(".content-add-form").forEach(form => {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const collectionName = form.dataset.collection;
+    const config = CONTENT_CONFIG[collectionName];
+    const data = {};
+    let allFilled = true;
+    config.fields.forEach(f => {
+      const val = form.querySelector(`[name="${f}"]`).value.trim();
+      if (!val) allFilled = false;
+      data[f] = val;
+    });
+    if (!allFilled) return;
+    data.order = Date.now(); // new entries sort after existing ones
+
+    const submitBtn = form.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+    try {
+      await db.collection(collectionName).add(data);
+      form.reset();
+      loadContentSection(collectionName);
+    } catch (err) {
+      console.error(err);
+      alert("Could not add this entry. Please try again.");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
 });
