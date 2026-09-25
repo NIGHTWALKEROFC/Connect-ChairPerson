@@ -19,6 +19,9 @@
     <span class="brand" data-i18n="siteTitle">Paraathippetti</span>
   </div>
   <div class="topbar-right">
+    <button id="shareBtn" class="icon-btn" aria-label="Share this site">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+    </button>
     <button id="langToggle" class="lang-btn" aria-label="Toggle language">മല</button>
     <button id="menuOpenBtn" class="icon-btn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
       <span class="bar"></span><span class="bar"></span><span class="bar"></span>
@@ -151,12 +154,32 @@
   </div>
 </div>
 
+<!-- ============ SHARE MODAL ============ -->
+<div class="modal-overlay" id="shareOverlay">
+  <div class="modal panel--compact" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <button class="modal-close" id="shareCloseBtn" aria-label="Close">&times;</button>
+    <h2 id="shareTitle" data-i18n="shareTitle">Share this site</h2>
+    <p class="modal-sub" data-i18n="shareSub">Send the link, or let someone scan the QR code to open it directly.</p>
+
+    <div class="share-actions">
+      <button type="button" class="btn btn-primary" id="shareNativeBtn" data-i18n="shareSendBtn" hidden>Share link</button>
+      <button type="button" class="btn btn-outline" id="shareCopyBtn" data-i18n="shareCopyBtn">Copy link</button>
+    </div>
+
+    <div class="share-qr-block">
+      <p class="input-hint" data-i18n="shareQrLabel">Or scan to open:</p>
+      <div id="shareQrCode" class="share-qr-code"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ============ FOOTER ============ -->
 <footer class="site-footer">
   <span data-i18n="footerCredit">Website by Mohammed Rinshan (NIGHTWALKER)</span>
 </footer>
 
 <!-- Firebase SDK (compat, simple <script> tag version) -->
+<script src="js/qrcode.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
