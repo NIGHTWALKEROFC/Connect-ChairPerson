@@ -1,5 +1,5 @@
 /* =========================================================
-   Voice to the Chair — stylesheet
+   Paraathippetti — stylesheet
    Palette: indigo #1B2A4A, gold #C9973D, ivory #FAF7F1,
             teal #2F6F6F, charcoal #232323
    Type: Lora (headings) + Inter (body) + Noto Sans Malayalam
@@ -121,13 +121,6 @@ input, textarea { font-family: inherit; }
 
 .hero-inner {
   max-width: 640px;
-  opacity: 0;
-  transform: translateY(14px);
-  animation: heroIn 0.9s ease forwards 0.15s;
-}
-
-@keyframes heroIn {
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .hero-eyebrow {
@@ -139,19 +132,42 @@ input, textarea { font-family: inherit; }
   max-width: 520px;
   margin: 0 auto 28px;
   min-height: 3.2em;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.85s cubic-bezier(.22,.61,.36,1) forwards 0.1s;
 }
 
 .hero-heading {
   font-size: clamp(2.4rem, 6vw, 3.4rem);
   letter-spacing: -0.01em;
+  position: relative;
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(14px) scale(0.98);
+  animation: fadeUpScale 0.9s cubic-bezier(.22,.61,.36,1) forwards 0.42s;
+}
+.hero-heading::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+  width: 0;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 3px;
+  transform: translateX(-50%);
+  animation: drawLine 0.6s ease forwards 1.05s;
 }
 
 .hero-sub {
   color: var(--grey);
   font-size: 1.05rem;
   max-width: 460px;
-  margin: 0 auto 40px;
+  margin: 22px auto 40px;
   line-height: 1.6;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.8s cubic-bezier(.22,.61,.36,1) forwards 0.85s;
 }
 
 .hero-actions {
@@ -159,6 +175,23 @@ input, textarea { font-family: inherit; }
   flex-wrap: wrap;
   gap: 14px;
   justify-content: center;
+}
+.hero-actions .btn {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.7s cubic-bezier(.22,.61,.36,1) forwards;
+}
+.hero-actions .btn:nth-child(1) { animation-delay: 1.15s; }
+.hero-actions .btn:nth-child(2) { animation-delay: 1.3s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUpScale {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes drawLine {
+  to { width: 56px; }
 }
 
 /* ---------- Buttons ---------- */
@@ -267,6 +300,7 @@ input, textarea { font-family: inherit; }
   width: min(520px, 92vw);
   max-height: 88vh;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 20px 60px rgba(19,31,56,0.25);
   z-index: 61;
 }
@@ -342,7 +376,8 @@ input[type="file"] { padding: 9px 10px; }
   flex: 1;
   margin: 0;
 }
-.tracking-id-row { display: flex; align-items: stretch; gap: 10px; }
+.tracking-id-row { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+.tracking-id-box { min-width: 0; }
 .copy-id-btn { flex-shrink: 0; padding: 0 18px; font-size: 0.85rem; }
 .tracking-warning {
   margin: 12px 0 0;
@@ -383,13 +418,19 @@ input[type="file"] { padding: 9px 10px; }
 
 .empty-note { color: var(--grey); font-size: 0.92rem; margin-top: 14px; }
 
-.track-row { display: flex; gap: 10px; margin-top: 8px; }
+.track-row { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
 .track-row input {
-  flex: 1;
+  flex: 1 1 200px;
+  min-width: 0;
   border: 1.5px solid var(--line);
   border-radius: 8px;
   padding: 11px 13px;
   background: var(--ivory);
+}
+.track-row .btn { flex-shrink: 0; }
+@media (max-width: 420px) {
+  .track-row { flex-direction: column; }
+  .track-row .btn { width: 100%; justify-content: center; }
 }
 .divider { border: none; border-top: 1px solid var(--line); margin: 26px 0 6px; }
 
@@ -429,7 +470,10 @@ input[type="file"] { padding: 9px 10px; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .hero-inner { animation: none; opacity: 1; transform: none; }
+  .hero-eyebrow, .hero-heading, .hero-sub, .hero-actions .btn {
+    animation: none; opacity: 1; transform: none;
+  }
+  .hero-heading::after { animation: none; width: 56px; }
   * { transition: none !important; }
 }
 
