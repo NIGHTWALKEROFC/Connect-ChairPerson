@@ -253,3 +253,129 @@
 .status-controls .btn { padding: 8px 16px; font-size: 0.85rem; }
 .save-note { font-size: 0.78rem; color: var(--approved); margin-left: 6px; opacity: 0; transition: opacity 0.2s ease; }
 .save-note.show { opacity: 1; }
+
+/* ---------- Tabs ---------- */
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+.tab-btn {
+  border: none;
+  background: transparent;
+  padding: 14px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--grey);
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1px;
+}
+.tab-btn.active { color: var(--indigo); border-bottom-color: var(--gold); }
+.tab-btn:hover { color: var(--indigo); }
+.tab-panel[hidden] { display: none; }
+
+/* ---------- Card flags (attachment / replied) ---------- */
+.card-flags { display: flex; gap: 10px; margin-top: 10px; }
+.attachment-flag, .reply-flag {
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.attachment-flag { color: var(--teal); }
+.reply-flag { color: var(--gold); }
+
+/* ---------- Reply block (inside detail modal) ---------- */
+.detail-reply-block { margin-bottom: 18px; }
+.detail-reply-block textarea {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 9px;
+  padding: 11px 13px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--ivory);
+  resize: vertical;
+  margin-top: 8px;
+  outline: none;
+}
+.detail-reply-block textarea:focus { border-color: var(--gold); }
+.detail-reply-actions { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.detail-reply-actions .btn { padding: 9px 18px; font-size: 0.85rem; }
+
+/* ---------- Site Content manager ---------- */
+.content-section {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 22px;
+}
+.content-section h2 { font-size: 1.1rem; margin-bottom: 14px; }
+
+.content-add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px dashed var(--line);
+}
+.content-add-form input[type="text"],
+.content-add-form textarea {
+  flex: 1;
+  min-width: 160px;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  background: var(--ivory);
+  outline: none;
+}
+.content-add-form textarea { resize: vertical; min-height: 42px; }
+.content-add-form input:focus, .content-add-form textarea:focus { border-color: var(--gold); }
+.content-add-form button { flex-shrink: 0; padding: 10px 18px; font-size: 0.85rem; align-self: center; }
+
+.content-list { display: flex; flex-direction: column; gap: 10px; }
+.content-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 12px 14px;
+}
+.content-item-display h3 { margin: 0 0 4px; font-size: 0.95rem; color: var(--indigo); }
+.content-item-display p { margin: 0; font-size: 0.85rem; color: var(--charcoal); line-height: 1.4; }
+.content-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-mini {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 7px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--grey);
+}
+.btn-mini:hover { border-color: var(--gold); color: var(--indigo); }
+.delete-btn:hover { border-color: var(--rejected); color: var(--rejected); }
+
+.content-item-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.content-item-edit-form input, .content-item-edit-form textarea {
+  border: 1.5px solid var(--gold);
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  background: #fff;
+}
+.content-item-edit-form .content-item-actions { justify-content: flex-end; }
