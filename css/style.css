@@ -305,9 +305,15 @@ input, textarea { font-family: inherit; }
   z-index: 61;
 }
 .panel--compact {
-  width: min(400px, 92vw);
-  padding: 28px 26px;
+  width: fit-content;
+  min-width: min(300px, 88vw);
+  max-width: min(360px, 92vw);
+  padding: 26px 24px;
 }
+.panel--compact h2 { font-size: 1.3rem; margin-bottom: 8px; padding-right: 28px; }
+.panel--compact .modal-sub { margin: 0 0 16px; font-size: 0.87rem; }
+.panel--compact .track-row { margin-top: 2px; }
+.panel--compact .input-hint { margin: 7px 0 0; }
 
 .modal-close {
   position: absolute;
@@ -404,6 +410,29 @@ input[type="file"] { padding: 9px 10px; }
 .admin-reply-label { margin: 0 0 4px; font-size: 0.78rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.03em; }
 .admin-reply-text { margin: 0; font-size: 0.9rem; color: var(--charcoal); line-height: 1.5; white-space: pre-wrap; }
 
+/* ---------- Share modal ---------- */
+.share-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.share-actions .btn { flex: 1; justify-content: center; min-width: 130px; }
+.share-qr-block {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--line);
+  text-align: center;
+}
+.share-qr-block .input-hint { text-align: center; margin-bottom: 12px; }
+.share-qr-code {
+  display: inline-flex;
+  padding: 12px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+}
+.share-qr-code svg { display: block; width: 180px; height: 180px; }
+
 /* ---------- Info panels ---------- */
 .panel-section { display: none; }
 .panel-section.active { display: block; }
@@ -424,7 +453,7 @@ input[type="file"] { padding: 9px 10px; }
 
 .track-row { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
 .track-row input {
-  flex: 1 1 200px;
+  flex: 1 1 150px;
   min-width: 0;
   border: 1.5px solid var(--line);
   border-radius: 8px;
