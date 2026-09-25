@@ -12,7 +12,7 @@ const QUOTES = [
   { en: "Your feedback is not a complaint, it is a contribution.", ml: "നിങ്ങളുടെ അഭിപ്രായം ഒരു പരാതി അല്ല, അതൊരു സംഭാവനയാണ്." },
   { en: "We grow stronger every time a student trusts us with a problem.", ml: "ഒരു വിദ്യാർത്ഥി ഒരു പ്രശ്നം ഞങ്ങളെ വിശ്വസിച്ച് ഏൽപ്പിക്കുമ്പോഴെല്ലാം ഞങ്ങൾ കൂടുതൽ ശക്തരാകുന്നു." },
   { en: "Change begins the moment someone decides to say something.", ml: "ആരെങ്കിലും എന്തെങ്കിലും പറയാൻ തീരുമാനിക്കുന്ന നിമിഷം മുതൽ മാറ്റം ആരംഭിക്കുന്നു." },
-  { en: "This office exists because your experience here matters.", ml: "ഈ ഓഫീസ് നിലനിൽക്കുന്നത് നിങ്ങളുടെ അനുഭവം ഇവിടെ പ്രധാനമായതുകൊണ്ടാണ്." },
+  { en: "This exists because your experience here matters.", ml: "ഇത് നിലനിൽക്കുന്നത് നിങ്ങളുടെ അനുഭവം ഇവിടെ പ്രധാനമായതുകൊണ്ടാണ്." },
   { en: "A campus that listens is a campus that keeps improving.", ml: "കേൾക്കുന്ന ഒരു ക്യാമ്പസ് നിരന്തരം മെച്ചപ്പെടുന്ന ഒരു ക്യാമ്പസാണ്." },
   { en: "Honesty from students is the shortest path to a better school.", ml: "വിദ്യാർത്ഥികളുടെ സത്യസന്ധതയാണ് മികച്ച ഒരു വിദ്യാലയത്തിലേക്കുള്ള ഏറ്റവും ചെറിയ വഴി." },
   { en: "No concern is too small to be written down and looked into.", ml: "എഴുതി പരിശോധിക്കാൻ ഒരു ആശങ്കയും വളരെ ചെറുതല്ല." },
@@ -36,7 +36,7 @@ const QUOTES = [
   { en: "Every rupee and every repair starts with someone noticing a need.", ml: "ഓരോ രൂപയും ഓരോ അറ്റകുറ്റപ്പണിയും തുടങ്ങുന്നത് ഒരു ആവശ്യം ആരെങ്കിലും ശ്രദ്ധിക്കുന്നതിലൂടെയാണ്." },
   { en: "You deserve to know what happened after you spoke up, so we track every case.", ml: "നിങ്ങൾ സംസാരിച്ചതിന് ശേഷം എന്ത് സംഭവിച്ചു എന്നറിയാൻ നിങ്ങൾക്ക് അവകാശമുണ്ട്, അതുകൊണ്ട് ഞങ്ങൾ ഓരോ കേസും ട്രാക്ക് ചെയ്യുന്നു." },
   { en: "Kindness and honesty can share the same sentence.", ml: "ദയയും സത്യസന്ധതയും ഒരേ വാക്യത്തിൽ ഒരുമിച്ച് നിൽക്കാം." },
-  { en: "The door to the chairperson's office is only ever as far as this button.", ml: "ചെയർപേഴ്‌സന്റെ ഓഫീസിലേക്കുള്ള വാതിൽ ഈ ബട്ടൺ അകലെയേ ഉള്ളൂ." },
+  { en: "The door to the chairperson is only ever as far as this button.", ml: "ചെയർപേഴ്‌സന്റെ അടുത്തേക്കുള്ള വാതിൽ ഈ ബട്ടൺ അകലെയേ ഉള്ളൂ." },
   { en: "We built this so no student has to wonder who is listening.", ml: "ആരാണ് കേൾക്കുന്നതെന്ന് ഒരു വിദ്യാർത്ഥിയും ചിന്തിക്കേണ്ടി വരരുത് എന്നതിനാലാണ് ഇത് ഞങ്ങൾ ഉണ്ടാക്കിയത്." },
   { en: "Progress here is measured in problems solved, not complaints avoided.", ml: "ഇവിടെ പുരോഗതി അളക്കുന്നത് ഒഴിവാക്കിയ പരാതികളിലല്ല, പരിഹരിച്ച പ്രശ്നങ്ങളിലാണ്." }
 ];
