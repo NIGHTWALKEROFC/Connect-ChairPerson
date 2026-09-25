@@ -68,6 +68,12 @@ const TRANSLATIONS = {
     status_approved: "Approved",
     status_rejected: "Rejected",
 
+    shareTitle: "Share this site",
+    shareSub: "Send the link, or let someone scan the QR code to open it directly.",
+    shareSendBtn: "Share link",
+    shareCopyBtn: "Copy link",
+    shareQrLabel: "Or scan to open:",
+
     footerCredit: "Website by Mohammed Rinshan (NIGHTWALKER)",
     adminLinkLabel: "Admin"
   },
@@ -131,6 +137,12 @@ const TRANSLATIONS = {
     status_pending: "പരിശോധനയിൽ",
     status_approved: "അംഗീകരിച്ചു",
     status_rejected: "നിരസിച്ചു",
+
+    shareTitle: "ഈ സൈറ്റ് ഷെയർ ചെയ്യുക",
+    shareSub: "ലിങ്ക് അയക്കുക, അല്ലെങ്കിൽ QR കോഡ് സ്കാൻ ചെയ്ത് നേരിട്ട് തുറക്കാൻ അനുവദിക്കുക.",
+    shareSendBtn: "ലിങ്ക് ഷെയർ ചെയ്യുക",
+    shareCopyBtn: "ലിങ്ക് കോപ്പി ചെയ്യുക",
+    shareQrLabel: "അല്ലെങ്കിൽ തുറക്കാൻ സ്കാൻ ചെയ്യുക:",
 
     footerCredit: "വെബ്സൈറ്റ് നിർമ്മിച്ചത് മുഹമ്മദ് റിൻഷാൻ (NIGHTWALKER)",
     adminLinkLabel: "അഡ്മിൻ"
