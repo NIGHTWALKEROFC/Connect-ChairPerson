@@ -339,7 +339,31 @@ input[type="file"] { padding: 9px 10px; }
   font-size: 1.1rem;
   color: var(--indigo);
   letter-spacing: 0.03em;
+  flex: 1;
+  margin: 0;
 }
+.tracking-id-row { display: flex; align-items: stretch; gap: 10px; }
+.copy-id-btn { flex-shrink: 0; padding: 0 18px; font-size: 0.85rem; }
+.tracking-warning {
+  margin: 12px 0 0;
+  font-size: 0.82rem;
+  color: var(--rejected);
+  background: rgba(179,69,44,0.07);
+  border: 1px solid rgba(179,69,44,0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+.admin-reply-box {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(47,111,111,0.07);
+  border: 1px solid rgba(47,111,111,0.2);
+  border-radius: 8px;
+}
+.admin-reply-label { margin: 0 0 4px; font-size: 0.78rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.03em; }
+.admin-reply-text { margin: 0; font-size: 0.9rem; color: var(--charcoal); line-height: 1.5; white-space: pre-wrap; }
 
 /* ---------- Info panels ---------- */
 .panel-section { display: none; }
