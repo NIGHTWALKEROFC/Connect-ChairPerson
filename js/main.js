@@ -30,7 +30,6 @@ function applyLanguage(lang) {
   });
 
   document.getElementById("langToggle").textContent = lang === "en" ? "മല" : "EN";
-  renderMyComplaintsFromStorage(); // re-render status labels in new language
 }
 
 document.getElementById("langToggle").addEventListener("click", () => {
@@ -81,7 +80,11 @@ function openPanel(panelId) {
   if (panelId === "panelUpcoming") loadListSection("projects_upcoming", "upcomingList", "upcomingEmpty", "project");
   if (panelId === "panelDone") loadListSection("projects_done", "doneList", "doneEmpty", "project");
   if (panelId === "panelFunds") loadListSection("funds", "fundsList", "fundsEmpty", "fund");
-  if (panelId === "panelMyComplaints") renderMyComplaintsFromStorage();
+  if (panelId === "panelMyComplaints") {
+    document.getElementById("trackInput").value = "";
+    document.getElementById("trackResult").innerHTML = "";
+    document.getElementById("trackNotFound").hidden = true;
+  }
 }
 function closePanel() { panelOverlay.classList.remove("open"); }
 
@@ -291,10 +294,8 @@ complaintForm.addEventListener("submit", async (e) => {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    saveTrackingIdLocally(trackingId);
-    localStorage.setItem(LAST_SUBMIT_KEY, String(Date.now()));
-
     document.getElementById("trackingIdDisplay").textContent = trackingId;
+    localStorage.setItem(LAST_SUBMIT_KEY, String(Date.now()));
     formStep.hidden = true;
     formSuccessStep.hidden = false;
   } catch (err) {
@@ -307,14 +308,33 @@ complaintForm.addEventListener("submit", async (e) => {
   }
 });
 
-/* ---------------- My Complaints (tracking) ---------------- */
-const MY_IDS_KEY = "vtc_my_tracking_ids";
+/* ---------------- Copy tracking ID ---------------- */
+document.getElementById("copyIdBtn").addEventListener("click", async () => {
+  const id = document.getElementById("trackingIdDisplay").textContent;
+  const btn = document.getElementById("copyIdBtn");
+  try {
+    await navigator.clipboard.writeText(id);
+  } catch (err) {
+    // Fallback for browsers without Clipboard API permission
+    const ta = document.createElement("textarea");
+    ta.value = id;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) { console.error(e); }
+    document.body.removeChild(ta);
+  }
+  const original = btn.textContent;
+  btn.textContent = TRANSLATIONS[currentLang].copyIdCopied;
+  setTimeout(() => { btn.textContent = original; }, 1800);
+});
 
-function saveTrackingIdLocally(id) {
-  const ids = JSON.parse(localStorage.getItem(MY_IDS_KEY) || "[]");
-  ids.unshift(id);
-  localStorage.setItem(MY_IDS_KEY, JSON.stringify([...new Set(ids)]));
-}
+/* ---------------- My Complaints (tracking by ID only) ----------------
+   Deliberately no auto-listing of "complaints submitted from this device":
+   on a shared/public device, that would reveal a previous student's
+   complaint to the next person without them ever typing an ID. A visitor
+   can only ever see a complaint by typing its exact tracking ID. */
 
 function statusPillHtml(status, customText) {
   const dict = TRANSLATIONS[currentLang];
@@ -328,35 +348,16 @@ function statusPillHtml(status, customText) {
 function complaintCardHtml(d) {
   const dict = TRANSLATIONS[currentLang];
   const date = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toLocaleDateString() : "";
+  const replyHtml = d.adminReply
+    ? `<div class="admin-reply-box"><p class="admin-reply-label">${dict.adminReplyLabel}</p><p class="admin-reply-text">${escapeHtml(d.adminReply)}</p></div>`
+    : "";
   return `<div class="card">
     <h3>${escapeHtml(d.complaintText.slice(0, 60))}${d.complaintText.length > 60 ? "…" : ""}</h3>
     <p>${dict.trackingIdLabel}: <strong>${escapeHtml(d.trackingId)}</strong></p>
     <p class="meta">${dict.submittedOn}: ${date}</p>
     <p style="margin-top:8px;">${statusPillHtml(d.status, d.customStatusText)}</p>
+    ${replyHtml}
   </div>`;
-}
-
-async function renderMyComplaintsFromStorage() {
-  const listEl = document.getElementById("myComplaintsList");
-  const emptyEl = document.getElementById("myComplaintsEmpty");
-  if (!listEl) return;
-  const ids = JSON.parse(localStorage.getItem(MY_IDS_KEY) || "[]");
-  listEl.innerHTML = "";
-
-  if (ids.length === 0) {
-    emptyEl.hidden = false;
-    return;
-  }
-  emptyEl.hidden = true;
-
-  for (const id of ids) {
-    try {
-      const doc = await db.collection("complaints").doc(id).get();
-      if (doc.exists) {
-        listEl.insertAdjacentHTML("beforeend", complaintCardHtml(doc.data()));
-      }
-    } catch (err) { console.error(err); }
-  }
 }
 
 document.getElementById("trackBtn").addEventListener("click", async () => {
@@ -373,7 +374,6 @@ document.getElementById("trackBtn").addEventListener("click", async () => {
       notFoundEl.hidden = false;
     } else {
       resultEl.innerHTML = complaintCardHtml(doc.data());
-      saveTrackingIdLocally(id);
     }
   } catch (err) {
     console.error(err);
