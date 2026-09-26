@@ -73,6 +73,21 @@
     </div>
 
     <div class="tab-panel" id="tabContent" hidden>
+      <div class="content-section" id="section_settings">
+        <h2>Site Settings</h2>
+        <div class="setting-row">
+          <div>
+            <p class="setting-label">Call Chairperson button</p>
+            <p class="setting-desc">When off, the button disappears from the main page completely — the page re-centers as if it was never there, nothing left looking empty or broken.</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="callButtonToggle" checked>
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
+        <p class="save-note" id="settingsSaveNote">Saved</p>
+      </div>
+
       <div class="content-section" id="section_projects_upcoming">
         <h2>Upcoming Projects</h2>
         <form class="content-add-form" data-collection="projects_upcoming">
@@ -102,6 +117,18 @@
           <button type="submit" class="btn btn-primary">+ Add</button>
         </form>
         <div class="content-list" id="contentList_funds"></div>
+      </div>
+
+      <div class="content-section" id="section_resolved_cases">
+        <h2>Complaints &amp; Solutions</h2>
+        <p class="modal-sub">Show students a real example: what was complained about, and what was done about it.</p>
+        <form class="content-add-form" data-collection="resolved_cases">
+          <input type="text" name="title" placeholder="Short title (e.g. Broken water cooler, Block C)" required>
+          <textarea name="complaint" placeholder="What was the complaint?" required rows="2"></textarea>
+          <textarea name="solution" placeholder="What was done about it?" required rows="2"></textarea>
+          <button type="submit" class="btn btn-primary">+ Add</button>
+        </form>
+        <div class="content-list" id="contentList_resolved_cases"></div>
       </div>
     </div>
   </main>
