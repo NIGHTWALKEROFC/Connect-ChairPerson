@@ -379,3 +379,46 @@
   background: #fff;
 }
 .content-item-edit-form .content-item-actions { justify-content: flex-end; }
+
+/* ---------- Site settings (toggle switch) ---------- */
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.setting-label { margin: 0 0 4px; font-weight: 600; color: var(--indigo); font-size: 0.95rem; }
+.setting-desc { margin: 0; font-size: 0.82rem; color: var(--grey); line-height: 1.5; max-width: 440px; }
+
+.toggle-switch { position: relative; flex-shrink: 0; cursor: pointer; }
+.toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle-track {
+  display: block;
+  width: 48px;
+  height: 28px;
+  background: #d8d3c6;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+  position: relative;
+}
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease;
+}
+.toggle-switch input:checked ~ .toggle-track { background: var(--approved); }
+.toggle-switch input:checked ~ .toggle-track .toggle-thumb { transform: translateX(20px); }
+.toggle-switch input:focus-visible ~ .toggle-track { outline: 2.5px solid var(--gold); outline-offset: 2px; }
+
+#section_settings .save-note { display: block; margin-top: 12px; margin-left: 0; }
