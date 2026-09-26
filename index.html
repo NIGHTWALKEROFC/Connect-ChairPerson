@@ -57,6 +57,7 @@
     <li><button class="drawer-item" data-panel="panelUpcoming" data-i18n="menu_upcoming">Upcoming Projects</button></li>
     <li><button class="drawer-item" data-panel="panelDone" data-i18n="menu_done">Completed Projects</button></li>
     <li><button class="drawer-item" data-panel="panelFunds" data-i18n="menu_funds">Funds Collected &amp; Used</button></li>
+    <li><button class="drawer-item" data-panel="panelResolved" data-i18n="menu_resolved">Complaints &amp; Solutions</button></li>
     <li><button class="drawer-item" data-panel="panelMyComplaints" data-i18n="menu_mycomplaints">My Complaints</button></li>
   </ul>
 </nav>
@@ -138,6 +139,13 @@
       <h2 data-i18n="fundsTitle">Funds Collected &amp; Used</h2>
       <div class="list" id="fundsList"></div>
       <p class="empty-note" id="fundsEmpty" data-i18n="fundsEmpty" hidden></p>
+    </div>
+
+    <div class="panel-section" id="panelResolved">
+      <h2 data-i18n="resolvedTitle">Complaints &amp; Solutions</h2>
+      <p class="modal-sub" data-i18n="resolvedSub">A look at real complaints we received and what was done about them.</p>
+      <div class="list" id="resolvedList"></div>
+      <p class="empty-note" id="resolvedEmpty" data-i18n="resolvedEmpty" hidden></p>
     </div>
 
     <div class="panel-section" id="panelMyComplaints">
