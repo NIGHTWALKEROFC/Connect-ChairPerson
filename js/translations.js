@@ -17,6 +17,7 @@ const TRANSLATIONS = {
     menu_upcoming: "Upcoming Projects",
     menu_done: "Completed Projects",
     menu_funds: "Funds Collected & Used",
+    menu_resolved: "Complaints & Solutions",
     menu_mycomplaints: "My Complaints",
     menu_close: "Close menu",
 
@@ -53,6 +54,12 @@ const TRANSLATIONS = {
     fundsCollected: "Collected",
     fundsUsed: "Used for",
 
+    resolvedTitle: "Complaints & Solutions",
+    resolvedSub: "A look at real complaints we received and what was done about them.",
+    resolvedEmpty: "No examples added yet.",
+    resolvedComplaintLabel: "Complaint:",
+    resolvedSolutionLabel: "Solution:",
+
     myComplaintsTitle: "My Complaints",
     myComplaintsSub: "Enter your tracking ID to check its status. Only someone with the exact ID can see a complaint — nothing is shown without it.",
     trackingPlaceholder: "Enter your tracking ID",
@@ -87,6 +94,7 @@ const TRANSLATIONS = {
     menu_upcoming: "വരാനിരിക്കുന്ന പദ്ധതികൾ",
     menu_done: "പൂർത്തിയായ പദ്ധതികൾ",
     menu_funds: "സമാഹരിച്ച ഫണ്ടും ഉപയോഗവും",
+    menu_resolved: "പരാതികളും പരിഹാരങ്ങളും",
     menu_mycomplaints: "എന്റെ പരാതികൾ",
     menu_close: "മെനു അടയ്ക്കുക",
 
@@ -122,6 +130,12 @@ const TRANSLATIONS = {
     fundsEmpty: "ഇതുവരെ ഫണ്ട് വിവരങ്ങളൊന്നും ചേർത്തിട്ടില്ല.",
     fundsCollected: "സമാഹരിച്ചത്",
     fundsUsed: "ഉപയോഗിച്ചത്",
+
+    resolvedTitle: "പരാതികളും പരിഹാരങ്ങളും",
+    resolvedSub: "ഞങ്ങൾക്ക് ലഭിച്ച യഥാർത്ഥ പരാതികളും അവയ്ക്ക് ചെയ്ത കാര്യങ്ങളും.",
+    resolvedEmpty: "ഇതുവരെ ഉദാഹരണങ്ങളൊന്നും ചേർത്തിട്ടില്ല.",
+    resolvedComplaintLabel: "പരാതി:",
+    resolvedSolutionLabel: "പരിഹാരം:",
 
     myComplaintsTitle: "എന്റെ പരാതികൾ",
     myComplaintsSub: "സ്ഥിതി പരിശോധിക്കാൻ നിങ്ങളുടെ ട്രാക്കിംഗ് ഐഡി നൽകുക. കൃത്യമായ ഐഡി ഉള്ളവർക്ക് മാത്രമേ ഒരു പരാതി കാണാൻ കഴിയൂ — ഐഡി ഇല്ലാതെ ഒന്നും കാണിക്കില്ല.",
