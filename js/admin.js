@@ -63,6 +63,7 @@ if (firebaseReady) {
       adminEmail.textContent = user.email;
       loadComplaints();
       loadAllContentSections();
+      loadSiteSettings();
     } else {
       localStorage.removeItem(LOGIN_AT_KEY);
       loginWrap.hidden = false;
@@ -462,6 +463,10 @@ const CONTENT_CONFIG = {
   funds: {
     fields: ["title", "collected", "usedFor"],
     display: d => `<h3>${escapeHtml(d.title)}</h3><p>Collected: ${escapeHtml(d.collected)}</p><p>Used for: ${escapeHtml(d.usedFor)}</p>`
+  },
+  resolved_cases: {
+    fields: ["title", "complaint", "solution"],
+    display: d => `<h3>${escapeHtml(d.title)}</h3><p><strong>Complaint:</strong> ${escapeHtml(d.complaint)}</p><p><strong>Solution:</strong> ${escapeHtml(d.solution)}</p>`
   }
 };
 
@@ -520,9 +525,10 @@ function buildContentItem(collectionName, id, data) {
 
 function startEditContentItem(item, collectionName, id, data) {
   const config = CONTENT_CONFIG[collectionName];
+  const LONG_FIELDS = ["description", "complaint", "solution"];
   const fieldsHtml = config.fields.map(f => {
     const val = escapeHtml(data[f] || "");
-    return f === "description"
+    return LONG_FIELDS.includes(f)
       ? `<textarea name="${f}" rows="2">${val}</textarea>`
       : `<input type="text" name="${f}" value="${val}">`;
   }).join("");
@@ -585,4 +591,41 @@ document.querySelectorAll(".content-add-form").forEach(form => {
       submitBtn.disabled = false;
     }
   });
+});
+
+/* ================= SITE SETTINGS =================
+   Currently just the Call Chairperson button on/off toggle. Stored in
+   Firestore at settings/site so every visitor's page can read it, and
+   only a signed-in admin can change it (see firestore.rules). */
+
+const callButtonToggle = document.getElementById("callButtonToggle");
+const settingsSaveNote = document.getElementById("settingsSaveNote");
+
+async function loadSiteSettings() {
+  try {
+    const doc = await db.collection("settings").doc("site").get();
+    const data = doc.exists ? doc.data() : {};
+    callButtonToggle.checked = data.callButtonEnabled !== false; // defaults to on
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+callButtonToggle.addEventListener("change", async () => {
+  const enabled = callButtonToggle.checked;
+  callButtonToggle.disabled = true;
+  try {
+    await db.collection("settings").doc("site").set(
+      { callButtonEnabled: enabled },
+      { merge: true }
+    );
+    settingsSaveNote.classList.add("show");
+    setTimeout(() => settingsSaveNote.classList.remove("show"), 1800);
+  } catch (err) {
+    console.error(err);
+    alert("Could not save this setting. Please try again.");
+    callButtonToggle.checked = !enabled; // revert the switch on failure
+  } finally {
+    callButtonToggle.disabled = false;
+  }
 });
