@@ -94,6 +94,7 @@ function openPanel(panelId) {
   if (panelId === "panelUpcoming") loadListSection("projects_upcoming", "upcomingList", "upcomingEmpty", "project");
   if (panelId === "panelDone") loadListSection("projects_done", "doneList", "doneEmpty", "project");
   if (panelId === "panelFunds") loadListSection("funds", "fundsList", "fundsEmpty", "fund");
+  if (panelId === "panelResolved") loadListSection("resolved_cases", "resolvedList", "resolvedEmpty", "resolved");
   if (panelId === "panelMyComplaints") {
     document.getElementById("trackInput").value = "";
     document.getElementById("trackResult").innerHTML = "";
@@ -108,13 +109,14 @@ document.querySelectorAll(".drawer-item").forEach(btn => {
 panelCloseBtn.addEventListener("click", closePanel);
 panelOverlay.addEventListener("click", (e) => { if (e.target === panelOverlay) closePanel(); });
 
-/* ---------------- Load Upcoming / Done / Funds from Firestore ----------------
-   Firestore structure (create these collections + docs from the Firebase
-   Console, no admin UI needed for these):
+/* ---------------- Load Upcoming / Done / Funds / Resolved from Firestore ----
+   Firestore structure (create these collections + docs from the admin
+   panel's "Site Content" tab, or directly in the Firebase Console):
 
    projects_upcoming / {autoId}  -> { title, description, order }
    projects_done     / {autoId}  -> { title, description, order }
    funds             / {autoId}  -> { title, collected, usedFor, order }
+   resolved_cases    / {autoId}  -> { title, complaint, solution, order }
 ------------------------------------------------------------------------- */
 async function loadListSection(collectionName, listElId, emptyElId, kind) {
   const listEl = document.getElementById(listElId);
@@ -132,6 +134,11 @@ async function loadListSection(collectionName, listElId, emptyElId, kind) {
       card.className = "card";
       if (kind === "project") {
         card.innerHTML = `<h3>${escapeHtml(d.title || "")}</h3><p>${escapeHtml(d.description || "")}</p>`;
+      } else if (kind === "resolved") {
+        const dict = TRANSLATIONS[currentLang];
+        card.innerHTML = `<h3>${escapeHtml(d.title || "")}</h3>
+          <p><strong>${dict.resolvedComplaintLabel}</strong> ${escapeHtml(d.complaint || "")}</p>
+          <p><strong>${dict.resolvedSolutionLabel}</strong> ${escapeHtml(d.solution || "")}</p>`;
       } else {
         const dict = TRANSLATIONS[currentLang];
         card.innerHTML = `<h3>${escapeHtml(d.title || "")}</h3>
@@ -454,6 +461,28 @@ shareCopyBtn.addEventListener("click", async () => {
   setTimeout(() => { shareCopyBtn.textContent = original; }, 1800);
 });
 
+/* ---------------- Site settings (call button on/off) ----------------
+   Read once on load from Firestore. Using the `hidden` attribute (not
+   just a visual hide) removes the button from the flex layout entirely,
+   so when it's off, the remaining button re-centers as if the Call
+   button was never there — no empty gap, nothing looking "missing". */
+async function applySiteSettings() {
+  const callBtn = document.getElementById("callBtn");
+  try {
+    const doc = await db.collection("settings").doc("site").get();
+    const data = doc.exists ? doc.data() : {};
+    // Defaults to shown if the setting has never been set.
+    const enabled = data.callButtonEnabled !== false;
+    callBtn.hidden = !enabled;
+  } catch (err) {
+    console.error(err);
+    // If we can't reach Firestore for some reason, fail toward showing
+    // the button rather than silently hiding a real contact option.
+    callBtn.hidden = false;
+  }
+}
+
 /* ---------------- Init ---------------- */
 applyLanguage(currentLang);
 showRandomQuote();
+applySiteSettings();
