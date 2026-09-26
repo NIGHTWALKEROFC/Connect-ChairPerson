@@ -38,5 +38,20 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth != null;
     }
+
+    // Resolved cases (complaint + the solution the admin recorded for it):
+    // public read-only, admin-only write. Same pattern as the three above.
+    match /resolved_cases/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Site settings (currently just whether the "Call Chairperson" button
+    // is shown). Public read so every visitor's page can check it; only a
+    // signed-in admin can change it.
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }
