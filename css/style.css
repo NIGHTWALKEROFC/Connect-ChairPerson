@@ -207,6 +207,7 @@ input, textarea { font-family: inherit; }
   text-decoration: none;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
 }
+.btn[hidden] { display: none; }
 .btn:active { transform: scale(0.97); }
 
 .btn-primary {
